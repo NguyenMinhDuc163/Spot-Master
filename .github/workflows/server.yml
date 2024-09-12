@@ -1,4 +1,4 @@
-name: Run Server
+name: Build and Run Server
 
 on:
   push:
@@ -9,8 +9,8 @@ on:
       - main
 
 jobs:
-  run-server:
-    name: Run Server
+  build-and-run-server:
+    name: Build and Run Server
     runs-on: ubuntu-latest
 
     steps:
@@ -23,11 +23,11 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-    - name: Compile all Java files
-      run: javac -d target $(find src/main/java -name "*.java")  # Biên dịch toàn bộ mã nguồn
+    - name: Set up Maven
+      run: mvn -B install  # Tải các dependency và biên dịch dự án
 
     - name: Run Server
-      run: java -cp target server.ServerRun  # Tên đầy đủ của class
+      run: mvn exec:java -Dexec.mainClass="server.ServerRun"  # Chạy ServerRun bằng Maven
       env:
         DB_TYPE: ${{ secrets.DB_TYPE }}
         MYSQL_DB_HOST: ${{ secrets.MYSQL_DB_HOST }}
