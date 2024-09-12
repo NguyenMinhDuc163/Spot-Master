@@ -24,21 +24,21 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      # Bước 3: Thiết lập các biến môi trường từ GitHub Secrets
-      - name: Set environment variables
-        run: echo "Setting up environment variables"
-        env:
-          DB_TYPE: ${{ secrets.DB_TYPE }}
-          MYSQL_DB_HOST: ${{ secrets.MYSQL_DB_HOST }}
-          MYSQL_DB_PORT: ${{ secrets.MYSQL_DB_PORT }}
-          MYSQL_DB_NAME: ${{ secrets.MYSQL_DB_NAME }}
-          MYSQL_DB_USERNAME: ${{ secrets.MYSQL_DB_USERNAME }}
-          MYSQL_DB_PASSWORD: ${{ secrets.MYSQL_DB_PASSWORD }}
-          POSTGRES_DB_HOST: ${{ secrets.POSTGRES_DB_HOST }}
-          POSTGRES_DB_PORT: ${{ secrets.POSTGRES_DB_PORT }}
-          POSTGRES_DB_NAME: ${{ secrets.POSTGRES_DB_NAME }}
-          POSTGRES_DB_USERNAME: ${{ secrets.POSTGRES_DB_USERNAME }}
-          POSTGRES_DB_PASSWORD: ${{ secrets.POSTGRES_DB_PASSWORD }}
+      # Bước 3: Tạo file .env trong thư mục resources từ GitHub Secrets
+      - name: Create .env file in resources
+        run: |
+          mkdir -p src/main/resources  # Tạo thư mục resources nếu chưa có
+          echo "DB_TYPE=${{ secrets.DB_TYPE }}" >> src/main/resources/.env
+          echo "MYSQL_DB_HOST=${{ secrets.MYSQL_DB_HOST }}" >> src/main/resources/.env
+          echo "MYSQL_DB_PORT=${{ secrets.MYSQL_DB_PORT }}" >> src/main/resources/.env
+          echo "MYSQL_DB_NAME=${{ secrets.MYSQL_DB_NAME }}" >> src/main/resources/.env
+          echo "MYSQL_DB_USERNAME=${{ secrets.MYSQL_DB_USERNAME }}" >> src/main/resources/.env
+          echo "MYSQL_DB_PASSWORD=${{ secrets.MYSQL_DB_PASSWORD }}" >> src/main/resources/.env
+          echo "POSTGRES_DB_HOST=${{ secrets.POSTGRES_DB_HOST }}" >> src/main/resources/.env
+          echo "POSTGRES_DB_PORT=${{ secrets.POSTGRES_DB_PORT }}" >> src/main/resources/.env
+          echo "POSTGRES_DB_NAME=${{ secrets.POSTGRES_DB_NAME }}" >> src/main/resources/.env
+          echo "POSTGRES_DB_USERNAME=${{ secrets.POSTGRES_DB_USERNAME }}" >> src/main/resources/.env
+          echo "POSTGRES_DB_PASSWORD=${{ secrets.POSTGRES_DB_PASSWORD }}" >> src/main/resources/.env
 
       # Bước 4: Build với Maven
       - name: Build with Maven
@@ -56,7 +56,7 @@ jobs:
           POSTGRES_DB_USERNAME: ${{ secrets.POSTGRES_DB_USERNAME }}
           POSTGRES_DB_PASSWORD: ${{ secrets.POSTGRES_DB_PASSWORD }}
 
-      # Bước 5: Kiểm tra kết quả
+      # Bước 5: Kiểm tra file JAR đã build
       - name: Verify JAR file
         run: ls -l target
 
