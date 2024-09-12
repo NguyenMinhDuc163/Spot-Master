@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package server.service;
+import io.github.cdimascio.dotenv.Dotenv;
 import server.ServerRun;
 import server.controller.UserController;
 import server.helper.Question;
@@ -16,10 +17,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author admin
- */
+
 public class Client implements Runnable {
     Socket s;
     DataInputStream dis;
@@ -27,14 +25,16 @@ public class Client implements Runnable {
 
     String loginUser;
     Client cCompetitor;
-    
-//    ArrayList<Client> clients
+
     Room joinedRoom; // if == null => chua vao phong nao het
 
+    private  String dbType;  // Biến để lưu loại cơ sở dữ liệu
+    private static Dotenv dotenv = Dotenv.load();
     public Client(Socket s) throws IOException {
         this.s = s;
+        this.dbType = dotenv.get("DB_TYPE");;  // Nhận loại cơ sở dữ liệu từ tham số khi khởi tạo
 
-        // obtaining input and output streams 
+        // obtaining input and output streams
         this.dis = new DataInputStream(s.getInputStream());
         this.dos = new DataOutputStream(s.getOutputStream());
     }
@@ -52,7 +52,7 @@ public class Client implements Runnable {
 
                 System.out.println(received);
                 String type = received.split(";")[0];
-               
+
                 switch (type) {
                     case "LOGIN":
                         onReceiveLogin(received);
@@ -68,10 +68,10 @@ public class Client implements Runnable {
                         break;
                     case "LOGOUT":
                         onReceiveLogout();
-                        break;  
+                        break;
                     case "CLOSE":
                         onReceiveClose();
-                        break; 
+                        break;
                     // chat
                     case "INVITE_TO_CHAT":
                         onReceiveInviteToChat(received);
@@ -113,15 +113,13 @@ public class Client implements Runnable {
                     case "ASK_PLAY_AGAIN":
                         onReceiveAskPlayAgain(received);
                         break;
-                        
+
                     case "EXIT":
                         running = false;
                 }
 
             } catch (IOException ex) {
                 ex.printStackTrace();
-                // leave room if needed
-//                onReceiveLeaveRoom("");
                 break;
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -130,7 +128,7 @@ public class Client implements Runnable {
         }
 
         try {
-            // closing resources 
+            // closing resources
             this.s.close();
             this.dis.close();
             this.dos.close();
@@ -144,8 +142,8 @@ public class Client implements Runnable {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    // send data fucntions
+
+    // send data functions
     public String sendData(String data) {
         try {
             this.dos.writeUTF(data);
@@ -156,7 +154,7 @@ public class Client implements Runnable {
             return "failed;" + e.getMessage();
         }
     }
-    
+
     private void onReceiveLogin(String received) {
         // get email / password from data
         String[] splitted = received.split(";");
@@ -164,7 +162,7 @@ public class Client implements Runnable {
         String password = splitted[2];
 
         // check login
-        String result = new UserController().login(username, password);
+        String result = new UserController(dbType).login(username, password);  // Truyền loại cơ sở dữ liệu khi khởi tạo
 
         if (result != null && result.split(";")[0].equals("success")) {
             // set login user
@@ -175,34 +173,34 @@ public class Client implements Runnable {
         sendData("LOGIN" + ";" + result);
         onReceiveGetListOnline();
     }
-    
+
     private void onReceiveRegister(String received) {
         // get email / password from data
         String[] splitted = received.split(";");
         String username = splitted[1];
         String password = splitted[2];
 
-        // reigster
-        String result = new UserController().register(username, password);
+        // register
+        String result = new UserController(dbType).register(username, password);  // Truyền loại cơ sở dữ liệu khi khởi tạo
 
         // send result
         sendData("REGISTER" + ";" + result);
     }
-    
+
     private void onReceiveGetListOnline() {
         String result = ServerRun.clientManager.getListUseOnline();
-        
+
         // send result
         String msg = "GET_LIST_ONLINE" + ";" + result;
         ServerRun.clientManager.broadcast(msg);
     }
-    
+
     private void onReceiveGetInfoUser(String received) {
         String[] splitted = received.split(";");
         String username = splitted[1];
         // get info user
-        String result = new UserController().getInfoUser(username);
-        
+        String result = new UserController(dbType).getInfoUser(username);  // Truyền loại cơ sở dữ liệu khi khởi tạo
+
         String status = "";
         Client c = ServerRun.clientManager.find(username);
         if (c == null) {
@@ -214,11 +212,11 @@ public class Client implements Runnable {
                 status = "In Game";
             }
         }
-                
+
         // send result
         sendData("GET_INFO_USER" + ";" + result + ";" + status);
     }
-    
+
     private void onReceiveLogout() {
         this.loginUser = null;
         // send result
