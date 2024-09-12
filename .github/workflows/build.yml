@@ -1,0 +1,68 @@
+name: Build and Package Java Project with Environment Secrets
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Bước 1: Checkout code từ repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Bước 2: Thiết lập JDK 21
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      # Bước 3: Thiết lập các biến môi trường từ GitHub Secrets
+      - name: Set environment variables
+        run: echo "Setting up environment variables"
+        env:
+          DB_TYPE: ${{ secrets.DB_TYPE }}
+          MYSQL_DB_HOST: ${{ secrets.MYSQL_DB_HOST }}
+          MYSQL_DB_PORT: ${{ secrets.MYSQL_DB_PORT }}
+          MYSQL_DB_NAME: ${{ secrets.MYSQL_DB_NAME }}
+          MYSQL_DB_USERNAME: ${{ secrets.MYSQL_DB_USERNAME }}
+          MYSQL_DB_PASSWORD: ${{ secrets.MYSQL_DB_PASSWORD }}
+          POSTGRES_DB_HOST: ${{ secrets.POSTGRES_DB_HOST }}
+          POSTGRES_DB_PORT: ${{ secrets.POSTGRES_DB_PORT }}
+          POSTGRES_DB_NAME: ${{ secrets.POSTGRES_DB_NAME }}
+          POSTGRES_DB_USERNAME: ${{ secrets.POSTGRES_DB_USERNAME }}
+          POSTGRES_DB_PASSWORD: ${{ secrets.POSTGRES_DB_PASSWORD }}
+
+      # Bước 4: Build với Maven
+      - name: Build with Maven
+        run: mvn clean package
+        env:
+          DB_TYPE: ${{ secrets.DB_TYPE }}
+          MYSQL_DB_HOST: ${{ secrets.MYSQL_DB_HOST }}
+          MYSQL_DB_PORT: ${{ secrets.MYSQL_DB_PORT }}
+          MYSQL_DB_NAME: ${{ secrets.MYSQL_DB_NAME }}
+          MYSQL_DB_USERNAME: ${{ secrets.MYSQL_DB_USERNAME }}
+          MYSQL_DB_PASSWORD: ${{ secrets.MYSQL_DB_PASSWORD }}
+          POSTGRES_DB_HOST: ${{ secrets.POSTGRES_DB_HOST }}
+          POSTGRES_DB_PORT: ${{ secrets.POSTGRES_DB_PORT }}
+          POSTGRES_DB_NAME: ${{ secrets.POSTGRES_DB_NAME }}
+          POSTGRES_DB_USERNAME: ${{ secrets.POSTGRES_DB_USERNAME }}
+          POSTGRES_DB_PASSWORD: ${{ secrets.POSTGRES_DB_PASSWORD }}
+
+      # Bước 5: Kiểm tra kết quả
+      - name: Verify JAR file
+        run: ls -l target
+
+      # Bước 6: Tải file JAR đã build lên artifacts để kiểm tra sau
+      - name: Upload JAR file
+        uses: actions/upload-artifact@v3
+        with:
+          name: built-jar
+          path: target/*.jar
