@@ -116,13 +116,20 @@ public class ClientRun {
     }
 
     public static void closeAllScene() {
-        connectServer.dispose();
-        loginView.dispose();
-        registerView.dispose();
-        homeView.dispose();
-        infoPlayerView.dispose();
-        messageView.dispose();
-        gameView.dispose();
+        if (!java.awt.GraphicsEnvironment.isHeadless()) {
+            // khi build khong cho chay giao dien
+            connectServer.dispose();
+            loginView.dispose();
+            registerView.dispose();
+            homeView.dispose();
+            infoPlayerView.dispose();
+            messageView.dispose();
+            gameView.dispose();
+        } else {
+            System.out.println("Chạy trong chế độ headless, không khởi tạo giao diện đồ họa.");
+        }
+
+
     }
 
     public static void main(String[] args) {

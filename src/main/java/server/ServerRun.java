@@ -73,10 +73,15 @@ public class ServerRun {
     }
 
     public static void main(String[] args) {
-        ServerView serverView = new ServerView();
-        serverView.setVisible(true);
-        serverView.setLocationRelativeTo(null);
-        
+        // khi build khong cho chay giao dien
+        if (!java.awt.GraphicsEnvironment.isHeadless()) {
+            ServerView serverView = new ServerView();
+            serverView.setVisible(true);
+            serverView.setLocationRelativeTo(null);
+        } else {
+            System.out.println("Chạy trong chế độ headless, không khởi tạo giao diện đồ họa.");
+        }
+
         new ServerRun();
     }
 }
