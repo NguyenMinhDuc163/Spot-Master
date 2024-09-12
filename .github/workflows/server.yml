@@ -23,11 +23,11 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-    - name: Compile Server
-      run: javac -d target src/main/java/server/ServerRun.java  # Đường dẫn đầy đủ đến file ServerRun.java
+    - name: Compile all Java files
+      run: javac -d target $(find src/main/java -name "*.java")  # Biên dịch toàn bộ mã nguồn
 
     - name: Run Server
-      run: java -cp target server.ServerRun  # Chạy class ServerRun
+      run: java -cp target server.ServerRun  # Chạy ServerRun với tên đầy đủ của class
       env:
         DB_TYPE: ${{ secrets.DB_TYPE }}
         MYSQL_DB_HOST: ${{ secrets.MYSQL_DB_HOST }}
