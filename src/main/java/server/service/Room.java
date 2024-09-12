@@ -1,37 +1,39 @@
 package server.service;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import server.ServerRun;
 import server.controller.UserController;
 import server.helper.CountDownTimer;
 import server.helper.CustumDateTimeFormatter;
+import server.model.UserModel;
+
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
-import server.model.UserModel;
 
 public class Room {
     String id;
     String time = "00:00";
     Client client1 = null, client2 = null;
     ArrayList<Client> clients = new ArrayList<>();
-
     boolean gameStarted = false;
     CountDownTimer matchTimer;
     CountDownTimer waitingTimer;
 
     String resultClient1;
     String resultClient2;
-
     String playAgainC1;
     String playAgainC2;
-    String waitingTime= "00:00";
+    String waitingTime = "00:00";
 
     public LocalDateTime startedTime;
 
+    private final String dbType;  // Biến lưu loại cơ sở dữ liệu
+    private static Dotenv dotenv = Dotenv.load();
     public Room(String id) {
-        // room id
         this.id = id;
+        this.dbType = dotenv.get("DB_TYPE");  // Nhận loại cơ sở dữ liệu khi khởi tạo Room
     }
 
     public boolean isGameStarted() {
@@ -79,7 +81,7 @@ public class Room {
         );
     }
 
-    public void deleteRoom () {
+    public void deleteRoom() {
         client1.setJoinedRoom(null);
         client1.setcCompetitor(null);
         client2.setJoinedRoom(null);
@@ -147,10 +149,8 @@ public class Room {
         return null;
     }
 
-    public int calculateResult (String received) {
+    public int calculateResult(String received) {
         String[] splitted = received.split(";");
-
-        String user1 = splitted[1];
 
         String a1 = splitted[4];
         String b1 = splitted[5];
@@ -184,44 +184,40 @@ public class Room {
             i++;
         }
 
-        System.out.println(user1 + " : " + i + " cau dung");
         return i;
     }
 
-    public void draw () throws SQLException {
-        UserModel user1 = new UserController().getUser(client1.getLoginUser());
-        UserModel user2 = new UserController().getUser(client2.getLoginUser());
+    public void draw() throws SQLException {
+        UserModel user1 = new UserController(dbType).getUser(client1.getLoginUser());  // Sử dụng dbType
+        UserModel user2 = new UserController(dbType).getUser(client2.getLoginUser());  // Sử dụng dbType
 
         user1.setDraw(user1.getDraw() + 1);
         user2.setDraw(user2.getDraw() + 1);
 
-        user1.setScore(user1.getScore()+ 0.5f);
-        user2.setScore(user2.getScore()+ 0.5f);
+        user1.setScore(user1.getScore() + 0.5f);
+        user2.setScore(user2.getScore() + 0.5f);
 
         int totalMatchUser1 = user1.getWin() + user1.getDraw() + user1.getLose();
         int totalMatchUser2 = user2.getWin() + user2.getDraw() + user2.getLose();
 
         float newAvgCompetitor1 = (totalMatchUser1 * user1.getAvgCompetitor() + user2.getScore()) / (totalMatchUser1 + 1);
-        float newAvgCompetitor2 = (totalMatchUser2 * user1.getAvgCompetitor() + user1.getScore()) / (totalMatchUser2 + 1);
-
-//        newAvgCompetitor1 = Math.round(newAvgCompetitor1 * 100) / 100;
-//        newAvgCompetitor2 = Math.round(newAvgCompetitor2 * 100) / 100;
+        float newAvgCompetitor2 = (totalMatchUser2 * user2.getAvgCompetitor() + user1.getScore()) / (totalMatchUser2 + 1);
 
         user1.setAvgCompetitor(newAvgCompetitor1);
         user2.setAvgCompetitor(newAvgCompetitor2);
 
-        new UserController().updateUser(user1);
-        new UserController().updateUser(user2);
+        new UserController(dbType).updateUser(user1);  // Sử dụng dbType
+        new UserController(dbType).updateUser(user2);  // Sử dụng dbType
     }
 
     public void client1Win(int time) throws SQLException {
-        UserModel user1 = new UserController().getUser(client1.getLoginUser());
-        UserModel user2 = new UserController().getUser(client2.getLoginUser());
+        UserModel user1 = new UserController(dbType).getUser(client1.getLoginUser());  // Sử dụng dbType
+        UserModel user2 = new UserController(dbType).getUser(client2.getLoginUser());  // Sử dụng dbType
 
         user1.setWin(user1.getWin() + 1);
         user2.setLose(user2.getLose() + 1);
 
-        user1.setScore(user1.getScore()+ 1);
+        user1.setScore(user1.getScore() + 1);
 
         int totalMatchUser1 = user1.getWin() + user1.getDraw() + user1.getLose();
         int totalMatchUser2 = user2.getWin() + user2.getDraw() + user2.getLose();
@@ -233,21 +229,20 @@ public class Room {
         user2.setAvgCompetitor(newAvgCompetitor2);
 
         float newAvgTime1 = (totalMatchUser1 * user1.getAvgTime() + time) / (totalMatchUser1 + 1);
-        System.out.println("newAvgTime1: " + newAvgTime1);
         user1.setAvgTime(newAvgTime1);
 
-        new UserController().updateUser(user1);
-        new UserController().updateUser(user2);
+        new UserController(dbType).updateUser(user1);  // Sử dụng dbType
+        new UserController(dbType).updateUser(user2);  // Sử dụng dbType
     }
 
     public void client2Win(int time) throws SQLException {
-        UserModel user1 = new UserController().getUser(client1.getLoginUser());
-        UserModel user2 = new UserController().getUser(client2.getLoginUser());
+        UserModel user1 = new UserController(dbType).getUser(client1.getLoginUser());  // Sử dụng dbType
+        UserModel user2 = new UserController(dbType).getUser(client2.getLoginUser());  // Sử dụng dbType
 
         user2.setWin(user2.getWin() + 1);
         user1.setLose(user1.getLose() + 1);
 
-        user2.setScore(user2.getScore()+ 1);
+        user2.setScore(user2.getScore() + 1);
 
         int totalMatchUser1 = user1.getWin() + user1.getDraw() + user1.getLose();
         int totalMatchUser2 = user2.getWin() + user2.getDraw() + user2.getLose();
@@ -259,14 +254,13 @@ public class Room {
         user2.setAvgCompetitor(newAvgCompetitor2);
 
         float newAvgTime2 = (totalMatchUser2 * user2.getAvgTime() + time) / (totalMatchUser2 + 1);
-        System.out.println("newAvgTime2: " + newAvgTime2);
         user2.setAvgTime(newAvgTime2);
 
-        new UserController().updateUser(user1);
-        new UserController().updateUser(user2);
+        new UserController(dbType).updateUser(user1);  // Sử dụng dbType
+        new UserController(dbType).updateUser(user2);  // Sử dụng dbType
     }
 
-    public void userLeaveGame (String username) throws SQLException {
+    public void userLeaveGame(String username) throws SQLException {
         if (client1.getLoginUser().equals(username)) {
             client2Win(0);
         } else if (client2.getLoginUser().equals(username)) {
@@ -274,22 +268,15 @@ public class Room {
         }
     }
 
-    public String handlePlayAgain () {
+    public String handlePlayAgain() {
         if (playAgainC1 == null || playAgainC2 == null) {
             return "NO";
         } else if (playAgainC1.equals("YES") && playAgainC2.equals("YES")) {
             return "YES";
-        } else if (playAgainC1.equals("NO") && playAgainC2.equals("YES")) {
-//            ServerRun.clientManager.sendToAClient(client2.getLoginUser(), "ASK_PLAY_AGAIN;NO");
-//            deleteRoom();
-            return "NO";
-        } else if (playAgainC2.equals("NO") && playAgainC2.equals("YES")) {
-//            ServerRun.clientManager.sendToAClient(client1.getLoginUser(), "ASK_PLAY_AGAIN;NO");
-//            deleteRoom();
-            return "NO";
-        } else {
+        } else if (playAgainC1.equals("NO") || playAgainC2.equals("NO")) {
             return "NO";
         }
+        return "NO";
     }
 
     // add/remove client
@@ -316,21 +303,19 @@ public class Room {
 
     // broadcast messages
     public void broadcast(String msg) {
-        clients.forEach((c) -> {
-            c.sendData(msg);
-        });
+        clients.forEach((c) -> c.sendData(msg));
     }
 
     public Client find(String username) {
         for (Client c : clients) {
-            if (c.getLoginUser()!= null && c.getLoginUser().equals(username)) {
+            if (c.getLoginUser() != null && c.getLoginUser().equals(username)) {
                 return c;
             }
         }
         return null;
     }
 
-    // gets sets
+    // getters and setters
     public String getId() {
         return id;
     }
@@ -414,6 +399,4 @@ public class Room {
     public void setWaitingTime(String waitingTime) {
         this.waitingTime = waitingTime;
     }
-
-
 }
