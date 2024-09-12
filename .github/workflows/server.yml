@@ -1,0 +1,42 @@
+name: Run Server
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run-server:
+    name: Run Server
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+
+    - name: Compile Server
+      run: javac -d target src/main/java/server/ServerRun.java  # Đường dẫn đầy đủ đến file ServerRun.java
+
+    - name: Run Server
+      run: java -cp target server.ServerRun  # Chạy class ServerRun
+      env:
+        DB_TYPE: ${{ secrets.DB_TYPE }}
+        MYSQL_DB_HOST: ${{ secrets.MYSQL_DB_HOST }}
+        MYSQL_DB_PORT: ${{ secrets.MYSQL_DB_PORT }}
+        MYSQL_DB_NAME: ${{ secrets.MYSQL_DB_NAME }}
+        MYSQL_DB_USERNAME: ${{ secrets.MYSQL_DB_USERNAME }}
+        MYSQL_DB_PASSWORD: ${{ secrets.MYSQL_DB_PASSWORD }}
+        POSTGRES_DB_HOST: ${{ secrets.POSTGRES_DB_HOST }}
+        POSTGRES_DB_PORT: ${{ secrets.POSTGRES_DB_PORT }}
+        POSTGRES_DB_NAME: ${{ secrets.POSTGRES_DB_NAME }}
+        POSTGRES_DB_USERNAME: ${{ secrets.POSTGRES_DB_USERNAME }}
+        POSTGRES_DB_PASSWORD: ${{ secrets.POSTGRES_DB_PASSWORD }}
