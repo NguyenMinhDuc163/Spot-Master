@@ -76,8 +76,9 @@ public class ClientRun {
                     messageView.setVisible(true);
                     break;
                 case GAMEVIEW:
-                    gameView = new GameView();
-                    gameView.setVisible(true);
+//                    gameView = new GameView();
+//                    gameView.setVisible(true);
+                    System.out.printf("Vao game");
                     break;
                 default:
                     break;
