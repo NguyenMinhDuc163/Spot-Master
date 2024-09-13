@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  app:
+    image: nguyenduc1603/spotmaster:v1.0.0
+    container_name: spotmaster-app
+    ports:
+      - "2000:2000"
+    environment:
+      - DB_TYPE=mysql
+      - MYSQL_DB_HOST=db
+      - MYSQL_DB_PORT=3306
+      - MYSQL_DB_NAME=btlltm
+      - MYSQL_DB_USERNAME=root
+      - MYSQL_DB_PASSWORD=NguyenDuc@163
+    depends_on:
+      - db
+    networks:
+      - spotmaster-network
+
+  db:
+    image: mysql:8.0
+    container_name: mysql-db
+    ports:
+      - "3307:3306"  # Hoặc sử dụng "3306:3306" nếu không có xung đột cổng
+    environment:
+      MYSQL_ROOT_PASSWORD: NguyenDuc@163
+      MYSQL_DATABASE: btlltm
+      MYSQL_PASSWORD: NguyenDuc@163  # Xóa MYSQL_USER vì bạn đã cấu hình mật khẩu cho người dùng root
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database_init:/docker-entrypoint-initdb.d
+    networks:
+      - spotmaster-network
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  spotmaster-network:
+
+volumes:
+  db_data:
