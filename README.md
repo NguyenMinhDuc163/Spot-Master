@@ -12,3 +12,8 @@ Chạy các lệnh sau để triển khai:
 ```bash
 docker pull nguyenduc1603/spotmaster:v1.0.0
 docker run -p 2000:2000 nguyenduc1603/spotmaster:v1.0.0
+
+# Sử dụng docker compose
+```bash
+docker-compose down
+docker-compose up --build
