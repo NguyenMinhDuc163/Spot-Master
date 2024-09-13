@@ -38,7 +38,7 @@
 
     <build>
         <plugins>
-            <!-- Plugin để tạo file JAR cho server và client -->
+            <!-- Plugin để tạo file JAR với Main-Class -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
