@@ -50,7 +50,8 @@ public class Room {
                 (Callable) () -> {
                     time = "" + CustumDateTimeFormatter.secondsToMinutes(matchTimer.getCurrentTick());
                     System.out.println(time);
-                    LoggerHandler.getInstance().log("[INFO] " + time);
+                    LoggerHandler.getInstance().info(time);
+
                     if (time.equals("00:00")) {
                         waitingClientTimer();
                         if (resultClient1 == null && resultClient2 == null) {
@@ -71,7 +72,8 @@ public class Room {
                 (Callable) () -> {
                     waitingTime = "" + CustumDateTimeFormatter.secondsToMinutes(waitingTimer.getCurrentTick());
                     System.out.println("WARNING: " + waitingTime);
-                    LoggerHandler.getInstance().log("[WARNING] " + waitingTime);
+                    LoggerHandler.getInstance().warn(waitingTime);
+
 
                     if (waitingTime.equals("00:00")) {
                         if (playAgainC1 == null && playAgainC2 == null) {

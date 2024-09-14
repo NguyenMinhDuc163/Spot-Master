@@ -49,14 +49,16 @@ public class UserController {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            LoggerHandler.getInstance().log("[ERROR] " + e);
+            LoggerHandler.getInstance().warn(String.valueOf(e));
+
             return "failed;" + e.getMessage();
         } finally {
             try {
                 if (r != null) r.close();
                 if (p != null) p.close();
             } catch (SQLException e) {
-                LoggerHandler.getInstance().log("[ERROR] " + e);
+                LoggerHandler.getInstance().warn(String.valueOf(e));
+
                 e.printStackTrace();
             }
         }
@@ -80,7 +82,8 @@ public class UserController {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            LoggerHandler.getInstance().log("[ERROR] " + e);
+            LoggerHandler.getInstance().warn(String.valueOf(e));
+
             return "failed;" + e.getMessage();
         } finally {
             try {
@@ -88,7 +91,8 @@ public class UserController {
                 if (p != null) p.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-                LoggerHandler.getInstance().log("[ERROR] " + e);
+                LoggerHandler.getInstance().warn(String.valueOf(e));
+
             }
         }
     }
@@ -110,7 +114,8 @@ public class UserController {
             }
             return "success;" + user.getUserName() + ";" + user.getScore() + ";" + user.getWin() + ";" + user.getDraw() + ";" + user.getLose() + ";" + user.getAvgCompetitor() + ";" + user.getAvgTime();
         } catch (SQLException e) {
-            LoggerHandler.getInstance().log("[ERROR] " + e);
+            LoggerHandler.getInstance().warn(String.valueOf(e));
+
             e.printStackTrace();
         }
         return null;
@@ -148,7 +153,8 @@ public class UserController {
             }
             return user;
         } catch (SQLException e) {
-            LoggerHandler.getInstance().log("[ERROR] " + e);
+            LoggerHandler.getInstance().warn(String.valueOf(e));
+
             e.printStackTrace();
         }
         return null;

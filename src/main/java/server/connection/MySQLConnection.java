@@ -40,9 +40,11 @@ public class MySQLConnection implements IDatabaseConnection {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
             System.out.println("Connected to MySQL Database.");
-            LoggerHandler.getInstance().log("[INFO] " + "Connected to MySQL Database.");
+            LoggerHandler.getInstance().info("Connected to MySQL Database.");
+
         } catch (SQLException | ClassNotFoundException e) {
-            LoggerHandler.getInstance().log("[ERROR] " + e);
+            LoggerHandler.getInstance().error(e);
+
             e.printStackTrace();
         }
         return connection;

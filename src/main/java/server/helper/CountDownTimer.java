@@ -59,7 +59,8 @@ public class CountDownTimer {
                             executor.submit(tickCallback);
                         } catch (Exception ex) {
                             ex.printStackTrace();
-                            LoggerHandler.getInstance().log("[ERROR] " + ex);
+                            LoggerHandler.getInstance().error(ex);
+
 //                            Logger.getLogger(Caro.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
@@ -73,7 +74,8 @@ public class CountDownTimer {
                             executor.shutdown();
                         } catch (Exception ex) {
                             ex.printStackTrace();
-                            LoggerHandler.getInstance().log("[ERROR] " + ex);
+                            LoggerHandler.getInstance().error(ex);
+
 //                            Logger.getLogger(Caro.class.getName()).log(Level.SEVERE, null, ex);
                         }
                         timer.cancel();

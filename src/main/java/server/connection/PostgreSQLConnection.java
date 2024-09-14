@@ -37,10 +37,12 @@ public class PostgreSQLConnection implements IDatabaseConnection {
             Class.forName("org.postgresql.Driver");
             connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
             System.out.println("Connected to PostgreSQL Database.");
-            LoggerHandler.getInstance().log("[INFO] " + "Connected to PostgreSQL Database.");
+            LoggerHandler.getInstance().info("Connected to PostgreSQL Database.");
+
 
         } catch (SQLException | ClassNotFoundException e) {
-            LoggerHandler.getInstance().log("[ERROR] " + e);
+            LoggerHandler.getInstance().error(e);
+
             e.printStackTrace();
         }
         return connection;

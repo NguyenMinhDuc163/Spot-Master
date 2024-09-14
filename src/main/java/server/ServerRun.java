@@ -30,7 +30,7 @@ public class ServerRun {
 
             ss = new ServerSocket(port);
             System.out.println("Created Server at port " + port + ".");
-            LoggerHandler.getInstance().log("[INFO] " + "Created Server at port " + port + ".");
+            LoggerHandler.getInstance().info("Created Server at port " + port + ".");
             // init managers
             clientManager = new ClientManager();
             roomManager = new RoomManager();
@@ -50,34 +50,33 @@ public class ServerRun {
                     // socket object to receive incoming client requests
                     Socket s = ss.accept();
                      System.out.println("+ New Client connected: " + s);
-                    LoggerHandler.getInstance().log("[INFO] " + "+ New Client connected: " + s);
+                    LoggerHandler.getInstance().info("+ New Client connected: " + s);
 
                     // create new client runnable object
                     Client c = new Client(s);
                     clientManager.add(c);
                     System.out.println("Count of client online: " + clientManager.getSize());
-                    LoggerHandler.getInstance().log("[INFO] " + "Count of client online: " + clientManager.getSize());
+                    LoggerHandler.getInstance().info("Count of client online: " + clientManager.getSize());
 
                     // execute client runnable
                     executor.execute(c);
 
                 } catch (IOException ex) {
                     ex.printStackTrace();
-                    LoggerHandler.getInstance().log("[ERROR] " + ex);
+                    LoggerHandler.getInstance().error(ex);
                     // Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                     isShutDown = true;
                 }
             }
 
             System.out.println("shutingdown executor...");
-            LoggerHandler.getInstance().log("[INFO] " + "shutingdown executor...");
+            LoggerHandler.getInstance().info("shutingdown executor...");
 
             executor.shutdownNow();
 
         } catch (IOException ex) {
             ex.printStackTrace();
-            LoggerHandler.getInstance().log("[ERROR] " + ex);
-            LoggerHandler.getInstance().log("SomeOtherClass đang thực hiện một thao tác.");
+            LoggerHandler.getInstance().error(ex);
         }
     }
 
@@ -87,10 +86,10 @@ public class ServerRun {
             ServerView serverView = new ServerView();
             serverView.setVisible(true);
             serverView.setLocationRelativeTo(null);
-            LoggerHandler.getInstance().log("Chạy trong chế độ headless, không khởi tạo giao diện đồ họa.");
+            LoggerHandler.getInstance().warn("Giao diện log đã khởi động. Đang chờ nhận log...\n");
 
         } else {
-            LoggerHandler.getInstance().log("[WARNING] " + "Chạy trong chế độ headless, không khởi tạo giao diện đồ họa.");
+            LoggerHandler.getInstance().warn("Chạy trong chế độ headless, không khởi tạo giao diện đồ họa.");
             System.out.println("Chạy trong chế độ headless, không khởi tạo giao diện đồ họa.");
         }
         new ServerRun();

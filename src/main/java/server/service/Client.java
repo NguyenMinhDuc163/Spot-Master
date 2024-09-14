@@ -52,7 +52,8 @@ public class Client implements Runnable {
                 received = dis.readUTF();
 
                 System.out.println(received);
-                LoggerHandler.getInstance().log("[INFO] " + received);
+                LoggerHandler.getInstance().info(received);
+
 
                 String type = received.split(";")[0];
 
@@ -123,11 +124,13 @@ public class Client implements Runnable {
 
             } catch (IOException ex) {
                 ex.printStackTrace();
-                LoggerHandler.getInstance().log("[ERROR] " + ex);
+                LoggerHandler.getInstance().error(ex);
+
                 break;
             } catch (SQLException ex) {
                 ex.printStackTrace();
-                LoggerHandler.getInstance().log("[ERROR] " + ex);
+                LoggerHandler.getInstance().error(ex);
+
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -138,7 +141,8 @@ public class Client implements Runnable {
             this.dis.close();
             this.dos.close();
             System.out.println("- Client disconnected: " + s);
-            LoggerHandler.getInstance().log("[INFO] " + "- Client disconnected: " + s);
+            LoggerHandler.getInstance().info("- Client disconnected: " + s);
+
 
 
             // remove from clientManager
@@ -146,7 +150,8 @@ public class Client implements Runnable {
 
         } catch (IOException ex) {
             ex.printStackTrace();
-            LoggerHandler.getInstance().log("[ERROR] " + ex);
+            LoggerHandler.getInstance().error(ex);
+
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -158,9 +163,10 @@ public class Client implements Runnable {
             return "success";
         } catch (IOException e) {
             e.printStackTrace();
-            LoggerHandler.getInstance().log("[ERROR] " + e);
+            LoggerHandler.getInstance().error(e);
+
             System.err.println("Send data failed!");
-            LoggerHandler.getInstance().log("error: " + "Send data failed!");
+            LoggerHandler.getInstance().error(e);
             return "failed;" + e.getMessage();
         }
     }
@@ -417,13 +423,15 @@ public class Client implements Runnable {
         
         while (!joinedRoom.getTime().equals("00:00") && joinedRoom.getTime() != null) {
             System.out.println(joinedRoom.getTime());
-            LoggerHandler.getInstance().log("[INFO] " + joinedRoom.getTime());
+            LoggerHandler.getInstance().info(joinedRoom.getTime());
+
 
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
-                LoggerHandler.getInstance().log("[ERROR] " + ex);
+                LoggerHandler.getInstance().error(ex);
+
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
         } 
@@ -431,7 +439,8 @@ public class Client implements Runnable {
         String data = "RESULT_GAME;success;" + joinedRoom.handleResultClient() 
                 + ";" + joinedRoom.getClient1().getLoginUser() + ";" + joinedRoom.getClient2().getLoginUser() + ";" + joinedRoom.getId();
         System.out.println(data);
-        LoggerHandler.getInstance().log("[INFO] " + data);
+        LoggerHandler.getInstance().info(data);
+
 
         joinedRoom.broadcast(data);
     } 
@@ -443,8 +452,10 @@ public class Client implements Runnable {
         
         System.out.println("client1: " + joinedRoom.getClient1().getLoginUser());
         System.out.println("client2: " + joinedRoom.getClient2().getLoginUser());
-        LoggerHandler.getInstance().log("[INFO] " + "client1: " + joinedRoom.getClient1().getLoginUser());
-        LoggerHandler.getInstance().log("[INFO] " + "client2: " + joinedRoom.getClient2().getLoginUser());
+        LoggerHandler.getInstance().info("client1: " + joinedRoom.getClient1().getLoginUser());
+
+        LoggerHandler.getInstance().info("client2: " + joinedRoom.getClient2().getLoginUser());
+
 
         
         if (user1.equals(joinedRoom.getClient1().getLoginUser())) {
@@ -458,7 +469,8 @@ public class Client implements Runnable {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
-                LoggerHandler.getInstance().log("[ERROR] " + ex);
+                LoggerHandler.getInstance().error(ex);
+
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
         } 
@@ -476,7 +488,7 @@ public class Client implements Runnable {
             this.cCompetitor = null;
         } else if (result == null) {
             System.out.println("[ERROR] Đã xảy ra lỗi khi xử lý yêu cầu:");
-            LoggerHandler.getInstance().log("[ERROR] Đã xảy ra lỗi khi xử lý yêu cầu: ");
+            LoggerHandler.getInstance().error(new Exception());
 
         }
     }
