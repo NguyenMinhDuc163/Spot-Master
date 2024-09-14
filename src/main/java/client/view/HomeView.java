@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import client.ClientRun;
+import server.helper.LoggerHandler;
 
 
 public class HomeView extends javax.swing.JFrame {

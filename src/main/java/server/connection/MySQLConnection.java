@@ -1,6 +1,8 @@
 package server.connection;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import server.helper.LoggerHandler;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -38,7 +40,9 @@ public class MySQLConnection implements IDatabaseConnection {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
             System.out.println("Connected to MySQL Database.");
+            LoggerHandler.getInstance().log("[INFO] " + "Connected to MySQL Database.");
         } catch (SQLException | ClassNotFoundException e) {
+            LoggerHandler.getInstance().log("[ERROR] " + e);
             e.printStackTrace();
         }
         return connection;

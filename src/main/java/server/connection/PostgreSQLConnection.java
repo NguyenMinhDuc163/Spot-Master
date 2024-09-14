@@ -1,6 +1,8 @@
 package server.connection;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import server.helper.LoggerHandler;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -35,7 +37,10 @@ public class PostgreSQLConnection implements IDatabaseConnection {
             Class.forName("org.postgresql.Driver");
             connection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
             System.out.println("Connected to PostgreSQL Database.");
+            LoggerHandler.getInstance().log("[INFO] " + "Connected to PostgreSQL Database.");
+
         } catch (SQLException | ClassNotFoundException e) {
+            LoggerHandler.getInstance().log("[ERROR] " + e);
             e.printStackTrace();
         }
         return connection;

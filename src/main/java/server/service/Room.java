@@ -5,6 +5,7 @@ import server.ServerRun;
 import server.controller.UserController;
 import server.helper.CountDownTimer;
 import server.helper.CustumDateTimeFormatter;
+import server.helper.LoggerHandler;
 import server.model.UserModel;
 
 import java.sql.SQLException;
@@ -49,6 +50,7 @@ public class Room {
                 (Callable) () -> {
                     time = "" + CustumDateTimeFormatter.secondsToMinutes(matchTimer.getCurrentTick());
                     System.out.println(time);
+                    LoggerHandler.getInstance().log("[INFO] " + time);
                     if (time.equals("00:00")) {
                         waitingClientTimer();
                         if (resultClient1 == null && resultClient2 == null) {
@@ -68,7 +70,9 @@ public class Room {
                 null,
                 (Callable) () -> {
                     waitingTime = "" + CustumDateTimeFormatter.secondsToMinutes(waitingTimer.getCurrentTick());
-                    System.out.println("waiting: " + waitingTime);
+                    System.out.println("WARNING: " + waitingTime);
+                    LoggerHandler.getInstance().log("[WARNING] " + waitingTime);
+
                     if (waitingTime.equals("00:00")) {
                         if (playAgainC1 == null && playAgainC2 == null) {
                             broadcast("ASK_PLAY_AGAIN;NO");

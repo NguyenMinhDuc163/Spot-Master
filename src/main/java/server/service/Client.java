@@ -7,6 +7,7 @@ package server.service;
 import io.github.cdimascio.dotenv.Dotenv;
 import server.ServerRun;
 import server.controller.UserController;
+import server.helper.LoggerHandler;
 import server.helper.Question;
 
 import java.io.DataInputStream;
@@ -51,6 +52,8 @@ public class Client implements Runnable {
                 received = dis.readUTF();
 
                 System.out.println(received);
+                LoggerHandler.getInstance().log("[INFO] " + received);
+
                 String type = received.split(";")[0];
 
                 switch (type) {
@@ -120,9 +123,11 @@ public class Client implements Runnable {
 
             } catch (IOException ex) {
                 ex.printStackTrace();
+                LoggerHandler.getInstance().log("[ERROR] " + ex);
                 break;
             } catch (SQLException ex) {
                 ex.printStackTrace();
+                LoggerHandler.getInstance().log("[ERROR] " + ex);
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -133,12 +138,15 @@ public class Client implements Runnable {
             this.dis.close();
             this.dos.close();
             System.out.println("- Client disconnected: " + s);
+            LoggerHandler.getInstance().log("[INFO] " + "- Client disconnected: " + s);
+
 
             // remove from clientManager
             ServerRun.clientManager.remove(this);
 
         } catch (IOException ex) {
             ex.printStackTrace();
+            LoggerHandler.getInstance().log("[ERROR] " + ex);
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -150,7 +158,9 @@ public class Client implements Runnable {
             return "success";
         } catch (IOException e) {
             e.printStackTrace();
+            LoggerHandler.getInstance().log("[ERROR] " + e);
             System.err.println("Send data failed!");
+            LoggerHandler.getInstance().log("error: " + "Send data failed!");
             return "failed;" + e.getMessage();
         }
     }
@@ -407,10 +417,13 @@ public class Client implements Runnable {
         
         while (!joinedRoom.getTime().equals("00:00") && joinedRoom.getTime() != null) {
             System.out.println(joinedRoom.getTime());
+            LoggerHandler.getInstance().log("[INFO] " + joinedRoom.getTime());
+
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
+                LoggerHandler.getInstance().log("[ERROR] " + ex);
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
         } 
@@ -418,6 +431,8 @@ public class Client implements Runnable {
         String data = "RESULT_GAME;success;" + joinedRoom.handleResultClient() 
                 + ";" + joinedRoom.getClient1().getLoginUser() + ";" + joinedRoom.getClient2().getLoginUser() + ";" + joinedRoom.getId();
         System.out.println(data);
+        LoggerHandler.getInstance().log("[INFO] " + data);
+
         joinedRoom.broadcast(data);
     } 
     
@@ -428,6 +443,9 @@ public class Client implements Runnable {
         
         System.out.println("client1: " + joinedRoom.getClient1().getLoginUser());
         System.out.println("client2: " + joinedRoom.getClient2().getLoginUser());
+        LoggerHandler.getInstance().log("[INFO] " + "client1: " + joinedRoom.getClient1().getLoginUser());
+        LoggerHandler.getInstance().log("[INFO] " + "client2: " + joinedRoom.getClient2().getLoginUser());
+
         
         if (user1.equals(joinedRoom.getClient1().getLoginUser())) {
             joinedRoom.setPlayAgainC1(reply);
@@ -440,6 +458,7 @@ public class Client implements Runnable {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
+                LoggerHandler.getInstance().log("[ERROR] " + ex);
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
         } 
@@ -456,7 +475,9 @@ public class Client implements Runnable {
             this.joinedRoom = null;
             this.cCompetitor = null;
         } else if (result == null) {
-            System.out.println("da co loi xay ra huhu");
+            System.out.println("[ERROR] Đã xảy ra lỗi khi xử lý yêu cầu:");
+            LoggerHandler.getInstance().log("[ERROR] Đã xảy ra lỗi khi xử lý yêu cầu: ");
+
         }
     }
         

@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import client.ClientRun;
+import server.helper.LoggerHandler;
 
 public class SocketHandler {
      
@@ -33,7 +34,6 @@ public class SocketHandler {
             s = new Socket();
             s.connect(new InetSocketAddress(ip, port), 4000);
             System.out.println("Connected to " + ip + ":" + port + ", localport:" + s.getLocalPort());
-
             // obtaining input and output streams
             dis = new DataInputStream(s.getInputStream());
             dos = new DataOutputStream(s.getOutputStream());
@@ -66,7 +66,6 @@ public class SocketHandler {
                 String received = dis.readUTF();
 
                 System.out.println("RECEIVED: " + received);
-
                 String type = received.split(";")[0];
 
                 switch (type) {

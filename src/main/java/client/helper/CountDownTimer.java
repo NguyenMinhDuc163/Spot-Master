@@ -1,5 +1,7 @@
 package client.helper;
 
+import server.helper.LoggerHandler;
+
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Callable;
@@ -59,7 +61,6 @@ public class CountDownTimer {
                             executor.submit(tickCallback);
                         } catch (Exception ex) {
                             ex.printStackTrace();
-//                            Logger.getLogger(Caro.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
 
@@ -72,6 +73,7 @@ public class CountDownTimer {
                             executor.shutdown();
                         } catch (Exception ex) {
                             ex.printStackTrace();
+
 //                            Logger.getLogger(Caro.class.getName()).log(Level.SEVERE, null, ex);
                         }
                         timer.cancel();

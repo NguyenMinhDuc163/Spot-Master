@@ -2,11 +2,13 @@
 package client.view;
 
 import java.util.concurrent.Callable;
-import javax.swing.JOptionPane;
+import javax.swing.*;
+
 import client.ClientRun;
 import client.helper.*;
+import server.helper.LoggerHandler;
+
 import java.util.Enumeration;
-import javax.swing.AbstractButton;
 
 
 public class GameView extends javax.swing.JFrame {
@@ -669,16 +671,8 @@ public class GameView extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-            java.util.logging.Logger.getLogger(GameView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            ex.printStackTrace();
-            java.util.logging.Logger.getLogger(GameView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
-            java.util.logging.Logger.getLogger(GameView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+                 UnsupportedLookAndFeelException ex) {
             ex.printStackTrace();
             java.util.logging.Logger.getLogger(GameView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }

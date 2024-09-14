@@ -1,8 +1,10 @@
 
 package client.view;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
+
 import client.ClientRun;
+import server.helper.LoggerHandler;
 
 
 public class ConnectServer extends javax.swing.JFrame {
@@ -143,7 +145,8 @@ public class ConnectServer extends javax.swing.JFrame {
         this.dispose();
         ClientRun.openScene(ClientRun.SceneName.LOGIN);
 
-        System.out.println("connect to server thanh cong");
+        System.out.println("connect to server successfully");
+
     }
 
     private void onFailed(String failedMsg) {
@@ -166,16 +169,8 @@ public class ConnectServer extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-            java.util.logging.Logger.getLogger(ConnectServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            ex.printStackTrace();
-            java.util.logging.Logger.getLogger(ConnectServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
-            java.util.logging.Logger.getLogger(ConnectServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+                 UnsupportedLookAndFeelException ex) {
             ex.printStackTrace();
             java.util.logging.Logger.getLogger(ConnectServer.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }

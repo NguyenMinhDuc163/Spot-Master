@@ -8,6 +8,7 @@ import client.view.InfoPlayerView;
 import client.view.LoginView;
 import client.view.MessageView;
 import client.view.RegisterView;
+import server.helper.LoggerHandler;
 
 public class ClientRun {
     public enum SceneName {
@@ -127,7 +128,7 @@ public class ClientRun {
             messageView.dispose();
             gameView.dispose();
         } else {
-            System.out.println("Chạy trong chế độ headless, không khởi tạo giao diện đồ họa.");
+            System.out.println("[WARNING]: Chạy trong chế độ headless, không khởi tạo giao diện đồ họa.");
         }
 
 
