@@ -13,7 +13,7 @@ public class ServerView extends javax.swing.JFrame {
         LoggerHandler.getInstance().setServerView(this);
     }
 
-    // Phương thức để ghi log vào jTextPane với màu sắc cho từ khóa
+    // Phương thức để ghi log vào jTextPane1 với màu sắc cho từ khóa
     public void logToTextPane(String level, String message, SimpleAttributeSet levelStyle) {
         try {
             StyledDocument doc = jTextPane1.getStyledDocument();
@@ -30,13 +30,27 @@ public class ServerView extends javax.swing.JFrame {
         }
     }
 
+    // Phương thức để xóa log và ghi lại dòng "Server đã khởi động."
+    private void clearLog() {
+        try {
+            // Xóa toàn bộ nội dung của jTextPane1
+            jTextPane1.setText("");
+
+            // Ghi lại dòng log "Server đã khởi động."
+            LoggerHandler.getInstance().info("Server đã khởi động.");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane(); // Thay đổi JTextArea thành JTextPane
+        jTextPane1 = new javax.swing.JTextPane();  // Thay đổi JTextArea thành JTextPane
         jLabel1 = new javax.swing.JLabel();
+        jButtonClearLog = new javax.swing.JButton(); // Thêm nút Clear Log
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -46,6 +60,14 @@ public class ServerView extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setText("Server Running...");
 
+        jButtonClearLog.setText("Clear Log"); // Thiết lập nút Clear Log
+        jButtonClearLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearLog(); // Gọi phương thức clearLog khi nút được nhấn
+            }
+        });
+
+        // Cập nhật layout
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -57,7 +79,10 @@ public class ServerView extends javax.swing.JFrame {
                                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(layout.createSequentialGroup()
                                                 .addGap(201, 201, 201)
-                                                .addComponent(jLabel1)))
+                                                .addComponent(jLabel1))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(200, 200, 200)
+                                                .addComponent(jButtonClearLog))) // Thêm nút Clear Log vào layout
                                 .addContainerGap(63, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -65,9 +90,11 @@ public class ServerView extends javax.swing.JFrame {
                         .addGroup(layout.createSequentialGroup()
                                 .addGap(29, 29, 29)
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(28, 28, 28)
+                                .addGap(18, 18, 18)
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(50, Short.MAX_VALUE))
+                                .addGap(18, 18, 18)
+                                .addComponent(jButtonClearLog) // Thêm nút Clear Log vào cuối
+                                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         pack();
@@ -85,13 +112,14 @@ public class ServerView extends javax.swing.JFrame {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
                  UnsupportedLookAndFeelException ex) {
             ex.printStackTrace();
-            LoggerHandler.getInstance().error (ex);
+            LoggerHandler.getInstance().error(ex);
             java.util.logging.Logger.getLogger(ServerView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ServerView().setVisible(true);
+                ServerView serverView = new ServerView();
+                serverView.setVisible(true);
                 LoggerHandler.getInstance().info("Server đã khởi động.");
             }
         });
@@ -101,5 +129,6 @@ public class ServerView extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextPane jTextPane1; // Thay đổi JTextArea thành JTextPane
+    private javax.swing.JButton jButtonClearLog; // Khai báo nút Clear Log
     // End of variables declaration//GEN-END:variables
 }
