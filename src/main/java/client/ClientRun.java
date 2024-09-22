@@ -1,6 +1,7 @@
 package client;
 
 import client.controller.SocketHandler;
+import client.helper.AssetHelper;
 import client.view.ConnectServer;
 import client.view.GameView;
 import client.view.HomeView;
@@ -8,7 +9,13 @@ import client.view.InfoPlayerView;
 import client.view.LoginView;
 import client.view.MessageView;
 import client.view.RegisterView;
+import client.view.game_view.MusicPlayer;
+import client.view.game_view.PlayFrame;
+import client.view.game_view.SelectPanel;
 import server.helper.LoggerHandler;
+
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class ClientRun {
     public enum SceneName {
@@ -77,8 +84,21 @@ public class ClientRun {
                     messageView.setVisible(true);
                     break;
                 case GAMEVIEW:
-//                    gameView = new GameView();
-//                    gameView.setVisible(true);
+                    gameView = new GameView();
+                    gameView.setVisible(true);
+
+//                    final PlayFrame pf=new PlayFrame();
+//                    final SelectPanel sp=new SelectPanel(pf);
+//                    pf.initCover();
+//                    final MusicPlayer bgm=new MusicPlayer(AssetHelper.MUSIC_BGM);
+//                    bgm.start(true);
+//
+//                    pf.addWindowListener(new WindowAdapter(){
+//                        public void windowClosed(WindowEvent we)
+//                        {
+//                            bgm.stop();
+//                        }
+//                    });
                     System.out.printf("Vao game");
                     break;
                 default:

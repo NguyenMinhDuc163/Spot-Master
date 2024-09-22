@@ -16,7 +16,7 @@ public class SelectPanel extends JPanel implements ActionListener{
 	ArrayList<double[]> XY,DXY;
 
 	//Khởi tạo bảng điều khiển chọn cấp độ
-	SelectPanel(PlayFrame frame)
+    public SelectPanel(PlayFrame frame)
 	{
 		super(new BorderLayout());
 		this.frame=frame;

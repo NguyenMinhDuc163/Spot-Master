@@ -1,11 +1,16 @@
 
 package client.view;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.concurrent.Callable;
 import javax.swing.*;
 
 import client.ClientRun;
 import client.helper.*;
+import client.view.game_view.MusicPlayer;
+import client.view.game_view.PlayFrame;
+import client.view.game_view.SelectPanel;
 import server.helper.LoggerHandler;
 
 import java.util.Enumeration;
@@ -16,7 +21,7 @@ public class GameView extends javax.swing.JFrame {
     String competitor = "";
     CountDownTimer matchTimer;
     CountDownTimer waitingClientTimer;
-    
+
     String a1 = "";
     String a2 = "";
     String a3 = "";
@@ -25,19 +30,19 @@ public class GameView extends javax.swing.JFrame {
     String b2 = "";
     String b3 = "";
     String b4 = "";
-    
+
     boolean answer = false;
     /**
      * Creates new form GameView
      */
     public GameView() {
         initComponents();
-        
+
         panel.setVisible(false);
         panelPlayAgain.setVisible(false);
         btnSubmit.setVisible(false);
         pbgTimer.setVisible(false);
-        
+
         // close window event
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -46,11 +51,11 @@ public class GameView extends javax.swing.JFrame {
                     ClientRun.socketHandler.leaveGame(competitor);
                     ClientRun.socketHandler.setRoomIdPresent(null);
                     dispose();
-                } 
+                }
             }
         });
     }
-    
+
     public void setWaitingRoom () {
         panel.setVisible(false);
         btnSubmit.setVisible(false);
@@ -59,21 +64,21 @@ public class GameView extends javax.swing.JFrame {
         lbWaiting.setText("waiting competitor...");
         waitingReplyClient();
     }
-    
+
     public void showAskPlayAgain (String msg) {
         panelPlayAgain.setVisible(true);
         lbResult.setText(msg);
     }
-    
+
     public void hideAskPlayAgain () {
         panelPlayAgain.setVisible(false);
     }
-    
+
     public void setInfoPlayer (String username) {
         competitor = username;
         infoPLayer.setText("Play game with: " + username);
     }
-    
+
     public void setQuestion1 (String a, String b, String answerA, String answerB, String answerC, String answerD) {
         setA1(a);
         setB1(b);
@@ -83,7 +88,7 @@ public class GameView extends javax.swing.JFrame {
         answer1c.setText(answerC);
         answer1d.setText(answerD);
     }
-    
+
     public void setQuestion2 (String a, String b, String answerA, String answerB, String answerC, String answerD) {
         setA2(a);
         setB2(b);
@@ -93,7 +98,7 @@ public class GameView extends javax.swing.JFrame {
         answer2c.setText(answerC);
         answer2d.setText(answerD);
     }
-    
+
     public void setQuestion3 (String a, String b, String answerA, String answerB, String answerC, String answerD) {
         setA3(a);
         setB3(b);
@@ -103,7 +108,7 @@ public class GameView extends javax.swing.JFrame {
         answer3c.setText(answerC);
         answer3d.setText(answerD);
     }
-    
+
     public void setQuestion4 (String a, String b, String answerA, String answerB, String answerC, String answerD) {
         setA4(a);
         setB4(b);
@@ -113,57 +118,74 @@ public class GameView extends javax.swing.JFrame {
         answer4c.setText(answerC);
         answer4d.setText(answerD);
     }
-    
+
     public void setStateHostRoom () {
         answer = false;
         btnStart.setVisible(true);
         lbWaiting.setVisible(false);
     }
-    
+
     public void setStateUserInvited () {
         answer = false;
         btnStart.setVisible(false);
         lbWaiting.setVisible(true);
     }
-    
+
     public void afterSubmit() {
         panel.setVisible(false);
         btnSubmit.setVisible(false);
         lbWaiting.setVisible(true);
         lbWaiting.setText("Waiting result from server...");
     }
-    
+
+    // TODO vao game
     public void setStartGame (int matchTimeLimit) {
-        answer = false;
-        buttonGroup1.clearSelection();
-        buttonGroup2.clearSelection();
-        buttonGroup3.clearSelection();
-        buttonGroup4.clearSelection();
-        
-        btnStart.setVisible(false);
-        lbWaiting.setVisible(false);
-        panel.setVisible(true);
-        btnSubmit.setVisible(true);
-        pbgTimer.setVisible(true);
-        
-        matchTimer = new CountDownTimer(matchTimeLimit);
-        matchTimer.setTimerCallBack(
-                // end match callback
-                null,
-                // tick match callback
-                (Callable) () -> {
-                    pbgTimer.setValue(100 * matchTimer.getCurrentTick() / matchTimer.getTimeLimit());
-                    pbgTimer.setString("" + CustumDateTimeFormatter.secondsToMinutes(matchTimer.getCurrentTick()));
-                    if (pbgTimer.getString().equals("00:00")) {
-                        afterSubmit();
-                    }
-                    return null;
-                },
-                // tick interval
-                1
-        );
+
+
+
+                    final PlayFrame pf=new PlayFrame();
+                    final SelectPanel sp=new SelectPanel(pf);
+                    pf.initCover();
+                    final MusicPlayer bgm=new MusicPlayer(AssetHelper.MUSIC_BGM);
+                    bgm.start(true);
+
+                    pf.addWindowListener(new WindowAdapter(){
+                        public void windowClosed(WindowEvent we)
+                        {
+                            bgm.stop();
+                        }
+                    });
+
+//        answer = false;
+//        buttonGroup1.clearSelection();
+//        buttonGroup2.clearSelection();
+//        buttonGroup3.clearSelection();
+//        buttonGroup4.clearSelection();
+//
+//        btnStart.setVisible(false);
+//        lbWaiting.setVisible(false);
+//        panel.setVisible(true);
+//        btnSubmit.setVisible(true);
+//        pbgTimer.setVisible(true);
+//
+//        matchTimer = new CountDownTimer(matchTimeLimit);
+//        matchTimer.setTimerCallBack(
+//                // end match callback
+//                null,
+//                // tick match callback
+//                (Callable) () -> {
+//                    pbgTimer.setValue(100 * matchTimer.getCurrentTick() / matchTimer.getTimeLimit());
+//                    pbgTimer.setString("" + CustumDateTimeFormatter.secondsToMinutes(matchTimer.getCurrentTick()));
+//                    if (pbgTimer.getString().equals("00:00")) {
+//                        afterSubmit();
+//                    }
+//                    return null;
+//                },
+//                // tick interval
+//                1
+//        );
     }
-    
+
     public void waitingReplyClient () {
         waitingClientTimer = new CountDownTimer(10);
         waitingClientTimer.setTimerCallBack(
@@ -178,12 +200,12 @@ public class GameView extends javax.swing.JFrame {
                 1
         );
     }
-    
+
     public void showMessage(String msg){
         JOptionPane.showMessageDialog(this, msg);
     }
-    
-    public String getSelectedButton1() {  
+
+    public String getSelectedButton1() {
         for (Enumeration<AbstractButton> buttons = buttonGroup1.getElements(); buttons.hasMoreElements();) {
             AbstractButton button = buttons.nextElement();
             if (button.isSelected()) {
@@ -192,8 +214,8 @@ public class GameView extends javax.swing.JFrame {
         }
         return null;
     }
-    
-    public String getSelectedButton2() {  
+
+    public String getSelectedButton2() {
         for (Enumeration<AbstractButton> buttons = buttonGroup2.getElements(); buttons.hasMoreElements();) {
             AbstractButton button = buttons.nextElement();
             if (button.isSelected()) {
@@ -202,8 +224,8 @@ public class GameView extends javax.swing.JFrame {
         }
         return null;
     }
-    
-    public String getSelectedButton3() {  
+
+    public String getSelectedButton3() {
         for (Enumeration<AbstractButton> buttons = buttonGroup3.getElements(); buttons.hasMoreElements();) {
             AbstractButton button = buttons.nextElement();
             if (button.isSelected()) {
@@ -212,8 +234,8 @@ public class GameView extends javax.swing.JFrame {
         }
         return null;
     }
-    
-    public String getSelectedButton4() {  
+
+    public String getSelectedButton4() {
         for (Enumeration<AbstractButton> buttons = buttonGroup4.getElements(); buttons.hasMoreElements();) {
             AbstractButton button = buttons.nextElement();
             if (button.isSelected()) {
@@ -222,7 +244,7 @@ public class GameView extends javax.swing.JFrame {
         }
         return null;
     }
-    
+
     public void pauseTime () {
         // pause timer
         matchTimer.pause();
@@ -632,7 +654,7 @@ public class GameView extends javax.swing.JFrame {
             ClientRun.socketHandler.leaveGame(competitor);
             ClientRun.socketHandler.setRoomIdPresent(null);
             dispose();
-        } 
+        }
     }//GEN-LAST:event_btnLeaveGameActionPerformed
 
     private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
@@ -662,7 +684,7 @@ public class GameView extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -685,7 +707,7 @@ public class GameView extends javax.swing.JFrame {
             }
         });
     }
-    
+
     public String getA1() {
         return a1;
     }
@@ -757,8 +779,8 @@ public class GameView extends javax.swing.JFrame {
     public void setAnswer(boolean answer) {
         this.answer = answer;
     }
-    
-    
+
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton answer1a;
