@@ -23,11 +23,11 @@ public class AssetHelper {
     public static final String DEFAULT_DATA_MESSAGE = DEFAULT_DATA_PATH + "message.txt";
 
     // Đường dẫn đến các file trong thư mục Images
-    public static final String IMAGE_BG = IMAGES_PATH + "bg.jpg";
+    public static final String IMAGE_BG = IMAGES_PATH + "new_bgr.png";
     public static final String IMAGE_LOOK = IMAGES_PATH + "look.gif";
-    public static final String IMAGE_PIKA = IMAGES_PATH + "pika.gif";
+    public static final String IMAGE_PIKA = IMAGES_PATH + "new_play_game.png";
     public static final String IMAGE_RED_MOUSE = IMAGES_PATH + "red_mouse.png";
-    public static final String IMAGE_TITLE = IMAGES_PATH + "title.gif";
+    public static final String IMAGE_TITLE = IMAGES_PATH + "new_title.png";
 
     // Đường dẫn đến các file âm thanh trong thư mục Music
     public static final String MUSIC_BGM = MUSIC_PATH + "bgm.wav";

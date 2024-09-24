@@ -86,19 +86,6 @@ public class ClientRun {
                 case GAMEVIEW:
                     gameView = new GameView();
                     gameView.setVisible(true);
-
-//                    final PlayFrame pf=new PlayFrame();
-//                    final SelectPanel sp=new SelectPanel(pf);
-//                    pf.initCover();
-//                    final MusicPlayer bgm=new MusicPlayer(AssetHelper.MUSIC_BGM);
-//                    bgm.start(true);
-//
-//                    pf.addWindowListener(new WindowAdapter(){
-//                        public void windowClosed(WindowEvent we)
-//                        {
-//                            bgm.stop();
-//                        }
-//                    });
                     System.out.printf("Vao game");
                     break;
                 default:

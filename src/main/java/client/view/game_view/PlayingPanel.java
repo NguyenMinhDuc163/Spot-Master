@@ -32,7 +32,7 @@ public class PlayingPanel extends JPanel implements ActionListener,MouseListener
 
 		this.addMouseListener(this);
 		this.setLayout(new BorderLayout());
-		this.setBackground(new Color(167,133,95));
+		this.setBackground(new Color(56, 152, 248));
 
 		JPanel center_panel=new JPanel();
 		center_panel.setLayout(new GridLayout(1,2));
@@ -40,7 +40,7 @@ public class PlayingPanel extends JPanel implements ActionListener,MouseListener
 
 		south_panel=new JPanel(new GridLayout(1,3));
 		south_panel.setBorder(new EmptyBorder(20,0,20,0));
-		south_panel.setBackground(new Color(167,133,95));
+		south_panel.setBackground(new Color(56, 152, 248));
 
 		cl_panel=new CenterPanel(name1,pointXY); cl_panel.addMouseListener(this);
 		cr_panel=new CenterPanel(name2,pointXY); cr_panel.addMouseListener(this);
@@ -49,16 +49,16 @@ public class PlayingPanel extends JPanel implements ActionListener,MouseListener
 		JTextArea tips=new JTextArea();
 		tips.setEditable(false);
 		tips.setFont(new Font("幼圆",0,20)); // Giữ nguyên font chữ
-		tips.append("- Có năm điểm khác biệt trong ảnh\n- Tìm ra chúng\n- Giới hạn thời gian 30 giây, chúc may mắn");
+		tips.append("- Có năm điểm khác biệt \n- Hãy tìm ra chúng\n- Giới hạn thời gian 30 giây");
 		tips.setOpaque(false);
 		tips.setBorder(new EmptyBorder(0,10,0,10));
 		south_panel.add(tips);
 
 		pbar=new JProgressBar(0,30);
-		pbar.setBackground(new Color(167,133,95));
+		pbar.setBackground(new Color(56, 152, 248));
 		pbar.setBorder(new EmptyBorder(5,0,5,0));
 		pbar.setValue(30);
-		pbar.setForeground(Color.RED);
+		pbar.setForeground(new Color(150, 133, 236));
 		south_panel.add(pbar);
 
 		countdown=new Thread(new Runnable(){
@@ -79,7 +79,7 @@ public class PlayingPanel extends JPanel implements ActionListener,MouseListener
 				}
 
 				//Hiển thị hộp thoại khi hết giờ, sau đó quay lại menu chính
-				JOptionPane.showMessageDialog(play_frame, "Hết giờ rồi. Nghĩ lại xem, bạn có trở nên mạnh mẽ hơn mà không nạp tiền không?","Hết giờ",JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(play_frame, "Hết giờ rồi. Hãy thử lại xem","Hết giờ",JOptionPane.PLAIN_MESSAGE);
 				play_frame.getContentPane().removeAll();
 				((JPanel)(play_frame.getContentPane())).updateUI();
 				play_frame.getContentPane().repaint();

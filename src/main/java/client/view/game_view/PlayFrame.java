@@ -29,7 +29,7 @@ public class PlayFrame extends JFrame implements ActionListener,MouseListener{
 		bg_panel=new MyPanel();
 
 		button_panel=new JPanel(new FlowLayout());
-		button_panel.setBackground(new Color(167,133,95));
+		button_panel.setBackground(new Color(56, 152, 248));
 
 		super.getContentPane().add(bg_panel,BorderLayout.CENTER);
 		super.getContentPane().add(button_panel,BorderLayout.SOUTH);
