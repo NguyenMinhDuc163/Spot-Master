@@ -41,3 +41,5 @@ docker run -p 2000:2000 nguyenduc1603/spotmaster:v1.0.0
 docker-compose down        # Tắt các container đang chạy
 docker-compose up --build  # Xây dựng lại image và khởi chạy các container
 ```
+
+...
