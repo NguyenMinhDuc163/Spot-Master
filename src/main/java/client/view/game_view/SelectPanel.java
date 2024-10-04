@@ -50,6 +50,8 @@ public class SelectPanel extends JPanel implements ActionListener{
 		super.add(button_panel,BorderLayout.SOUTH);
 	}
 
+
+
 	public void actionPerformed(ActionEvent ae) {
 		//Sự kiện nguồn là nút Cấp độ trước đó
 		if(ae.getSource().equals(pre_button))
@@ -121,6 +123,7 @@ public class SelectPanel extends JPanel implements ActionListener{
 		}
 	}
 }
+
 
 //Tùy chỉnh phong cách bảng điều khiển
 class MyPanel extends JPanel{

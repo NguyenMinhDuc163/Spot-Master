@@ -48,7 +48,7 @@ public class PlayingPanel extends JPanel implements ActionListener,MouseListener
 
 		JTextArea tips=new JTextArea();
 		tips.setEditable(false);
-		tips.setFont(new Font("幼圆",0,20)); // Giữ nguyên font chữ
+		tips.setFont(new Font("Tahoma",0,20)); // Giữ nguyên font chữ
 		tips.append("- Có năm điểm khác biệt \n- Hãy tìm ra chúng\n- Giới hạn thời gian 30 giây");
 		tips.setOpaque(false);
 		tips.setBorder(new EmptyBorder(0,10,0,10));
@@ -147,7 +147,39 @@ public class PlayingPanel extends JPanel implements ActionListener,MouseListener
 		}
 
 	}
+	public static void showPlayingPanel() {
+		// Tạo một cửa sổ (JFrame)
+		PlayFrame frame = new PlayFrame();  // Nếu bạn vẫn cần sử dụng PlayFrame
+		frame.setSize(1024, 680);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+		// Phát âm thanh khi bắt đầu trò chơi
+		MusicPlayer mp = new MusicPlayer(AssetHelper.MUSIC_CLICK);
+		mp.start(false);
+
+		// Chọn ngẫu nhiên một màn chơi từ dữ liệu
+		ArrayList<String> name1 = new ArrayList<>();
+		ArrayList<String> name2 = new ArrayList<>();
+		ArrayList<double[]> pointXY = new ArrayList<>();
+		DIYdata diy_data = new DIYdata();
+		diy_data.get(0, name1, name2, pointXY);  // Lấy dữ liệu trò chơi
+
+		int index = (int) (Math.random() * 5);  // Chọn ngẫu nhiên màn chơi
+
+		// Xóa nội dung hiện tại của JFrame
+		frame.getContentPane().removeAll();
+
+		// Tạo và thêm PlayingPanel
+		PlayingPanel panel = new PlayingPanel(frame, name1.get(index), name2.get(index), pointXY.get(index));
+		frame.getContentPane().add(panel);
+
+		// Cập nhật giao diện để hiển thị màn hình mới
+		frame.revalidate();
+		frame.repaint();
+
+		// Hiển thị frame
+		frame.setVisible(true);
+	}
 	//Thay đổi hình dạng con trỏ chuột thành mũi tên màu đỏ
 	public void mouseEntered(MouseEvent arg0) {
 		Image mouse_image=Toolkit.getDefaultToolkit().getImage(AssetHelper.IMAGE_RED_MOUSE);

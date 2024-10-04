@@ -43,12 +43,12 @@ public class DIYFrame extends JFrame implements ActionListener{
 		tips=new JTextArea();
 		panel_south.add(tips);
 		tips.setEditable(false);
-		tips.setFont(new Font("幼圆",0,18)); // Giữ nguyên font chữ
+		tips.setFont(new Font("Tahoma",0,18)); // Giữ nguyên font chữ
 		tips.append("- Vui lòng nhập hai hình lần lượt\n- Tỉ lệ dài rộng của hình là khoảng 3:2\n- Trong hình có 5 điểm khác nhau");
 
 		message=new JTextArea();
 		message.setEditable(false);
-		message.setFont(new Font("华文彩云",0,18)); // Giữ nguyên font chữ
+		message.setFont(new Font("Tahoma",0,18)); // Giữ nguyên font chữ
 		panel_south.add(message);
 
 

@@ -142,6 +142,23 @@ public class PlayFrame extends JFrame implements ActionListener,MouseListener{
 		this.setCursor(cursor);
 	}
 
+	public void startRandomGame() {
+		MusicPlayer mp = new MusicPlayer(AssetHelper.MUSIC_CLICK); // Khởi tạo luồng phát âm thanh nhấp chuột
+		mp.start(false);
+		super.setVisible(true);
+		// Chọn ngẫu nhiên một màn trong các màn mặc định, sau đó cập nhật bảng điều khiển và bắt đầu trò chơi
+		ArrayList<String> name1 = new ArrayList<String>(), name2 = new ArrayList<String>();
+		ArrayList<double[]> pointXY = new ArrayList<double[]>();
+		DIYdata diy_data = new DIYdata();
+		diy_data.get(0, name1, name2, pointXY);
+
+		int index = (int)(Math.random() * 5);
+		this.getContentPane().removeAll();
+		((JPanel)(this.getContentPane())).updateUI();
+		this.getContentPane().add(new PlayingPanel(this, name1.get(index), name2.get(index), pointXY.get(index)));
+		this.getContentPane().repaint();
+	}
+
 	public void mouseExited(MouseEvent arg0) {}
 
 	public void mousePressed(MouseEvent arg0) {}
@@ -156,7 +173,7 @@ class MyButton extends JButton
 	{
 		super.setBackground(Color.DARK_GRAY);
 		super.setForeground(Color.ORANGE);
-		super.setFont(new Font("微软雅黑",0,20)); // Giữ nguyên font chữ
+		super.setFont(new Font("Tahoma",0,20)); // Giữ nguyên font chữ
 		super.setText(text);
 		super.setFocusPainted(false);
 	}

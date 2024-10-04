@@ -1,19 +1,13 @@
 
 package client.view;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.concurrent.Callable;
-import javax.swing.*;
-
 import client.ClientRun;
-import client.helper.*;
-import client.view.game_view.MusicPlayer;
-import client.view.game_view.PlayFrame;
-import client.view.game_view.SelectPanel;
-import server.helper.LoggerHandler;
+import client.helper.CountDownTimer;
+import client.helper.CustumDateTimeFormatter;
 
+import javax.swing.*;
 import java.util.Enumeration;
+import java.util.concurrent.Callable;
 
 
 public class GameView extends javax.swing.JFrame {
@@ -140,21 +134,20 @@ public class GameView extends javax.swing.JFrame {
 
     // TODO vao game
     public void setStartGame (int matchTimeLimit) {
+        GameViewNew.showGameViewNew();
 
-
-
-                    final PlayFrame pf=new PlayFrame();
-                    final SelectPanel sp=new SelectPanel(pf);
-                    pf.initCover();
-                    final MusicPlayer bgm=new MusicPlayer(AssetHelper.MUSIC_BGM);
-                    bgm.start(true);
-
-                    pf.addWindowListener(new WindowAdapter(){
-                        public void windowClosed(WindowEvent we)
-                        {
-                            bgm.stop();
-                        }
-                    });
+//                    final PlayFrame pf=new PlayFrame();
+//                    final SelectPanel sp=new SelectPanel(pf);
+//                    pf.initCover();
+//                    final MusicPlayer bgm=new MusicPlayer(AssetHelper.MUSIC_BGM);
+//                    bgm.start(true);
+//
+//                    pf.addWindowListener(new WindowAdapter(){
+//                        public void windowClosed(WindowEvent we)
+//                        {
+//                            bgm.stop();
+//                        }
+//                    });
 
 //        answer = false;
 //        buttonGroup1.clearSelection();
