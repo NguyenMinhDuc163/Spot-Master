@@ -2,13 +2,7 @@ package client;
 
 import client.controller.SocketHandler;
 import client.helper.AssetHelper;
-import client.view.ConnectServer;
-import client.view.GameView;
-import client.view.HomeView;
-import client.view.InfoPlayerView;
-import client.view.LoginView;
-import client.view.MessageView;
-import client.view.RegisterView;
+import client.view.*;
 import client.view.game_view.MusicPlayer;
 import client.view.game_view.PlayFrame;
 import client.view.game_view.SelectPanel;
@@ -25,7 +19,9 @@ public class ClientRun {
         HOMEVIEW,
         INFOPLAYER,
         MESSAGEVIEW,
-        GAMEVIEW
+        GAMEVIEW,
+        gameViewNew
+
     }
 
     // scenes
@@ -36,6 +32,7 @@ public class ClientRun {
     public static GameView gameView;
     public static InfoPlayerView infoPlayerView;
     public static MessageView messageView;
+    public static GameViewNew gameViewNew;
 
     // controller 
     public static SocketHandler socketHandler;
@@ -54,6 +51,7 @@ public class ClientRun {
         infoPlayerView = new InfoPlayerView();
         messageView = new MessageView();
         gameView = new GameView();
+        gameViewNew = new GameViewNew();
     }
 
     public static void openScene(SceneName sceneName) {
@@ -88,6 +86,9 @@ public class ClientRun {
                     gameView.setVisible(true);
                     System.out.printf("Vao game");
                     break;
+                case gameViewNew:
+                    System.out.println("da vao gameviewnew");
+                    break;
                 default:
                     break;
             }
@@ -117,6 +118,8 @@ public class ClientRun {
                     break;
                 case GAMEVIEW:
                     gameView.dispose();
+                    break;
+                case gameViewNew:
                     break;
                 default:
                     break;

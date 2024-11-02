@@ -217,7 +217,11 @@ public class SocketHandler {
     public void startGame (String userInvited) { 
         sendData("START_GAME;" + loginUser + ";" + userInvited + ";" + roomIdPresent);
     }
-    
+
+    public void submitNewResult(String competitor){
+        String ans = ClientRun.gameViewNew.getFoundDifferences() + ";" + ClientRun.gameViewNew.getTimeTaken();
+    }
+
     public void submitResult (String competitor) { 
         String result1 = ClientRun.gameView.getSelectedButton1();
         String result2 = ClientRun.gameView.getSelectedButton2();

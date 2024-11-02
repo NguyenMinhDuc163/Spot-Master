@@ -34,7 +34,9 @@ public class MusicPlayer {
 			sourceDataLine = (SourceDataLine)AudioSystem.getLine(dataLineInfo);
 
 			sourceDataLine.open(audioFormat);
-			sourceDataLine.start();
+
+			// TODO tat nhac
+//			sourceDataLine.start();
 
 		}catch(UnsupportedAudioFileException ex){
 			ex.printStackTrace();

@@ -25,8 +25,10 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
     private JProgressBar pbar;
     private Thread countdown;
     private int timeRemaining;
+    private int foundDifferences = 0;  // Số điểm tìm được
+    private int timeTaken = 0;         // Thời gian hoàn thành
     //Khởi tạo bảng điều khiển trò chơi
-    GameViewNew(PlayFrame frame,String name1,String name2,double[] pointXY)
+    public GameViewNew(PlayFrame frame, String name1, String name2, double[] pointXY)
     {
         PF=frame;
         this.frame=frame;
@@ -81,8 +83,8 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
                     pbar.setStringPainted(true);
                     timeRemaining = count + 1;
                 }
-                int foundDifferences = cl_panel.getFoundDifferences();
-                int timeTaken = 30 - timeRemaining;
+                foundDifferences = cl_panel.getFoundDifferences();
+                timeTaken = 30 - timeRemaining;
                 System.out.println("------------------ found" +foundDifferences + " " +  timeTaken + " " + timeRemaining);
                 //Hiển thị hộp thoại khi hết giờ, sau đó quay lại menu chính
                 JOptionPane.showMessageDialog(play_frame, "Hết giờ rồi. Hãy thử lại xem","Hết giờ",JOptionPane.PLAIN_MESSAGE);
@@ -110,6 +112,10 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
         this.add(label,BorderLayout.NORTH);
 
         frame.setSize(1024,640);
+    }
+
+    public GameViewNew() {
+
     }
 
     public void actionPerformed(ActionEvent ae) {
@@ -145,8 +151,8 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
             countdown.interrupt();
             JOptionPane.showMessageDialog(frame, "Bạn thực sự là người kỳ cựu, đã tìm ra hết các điểm khác biệt","Hoàn thành",JOptionPane.PLAIN_MESSAGE,new ImageIcon("look.png"));
 
-            int foundDifferences = cl_panel.getFoundDifferences();
-            int timeTaken = 30 - timeRemaining;
+            foundDifferences = cl_panel.getFoundDifferences();
+            timeTaken = 30 - timeRemaining;
             System.out.println("------------------ found" +foundDifferences + " " +  timeTaken + " " + timeRemaining);
 
 
@@ -159,7 +165,7 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
         }
 
     }
-    public static void showGameViewNew() {
+    public  void showGameViewNew() {
         // Tạo một cửa sổ (JFrame)
         PlayFrame frame = new PlayFrame();  // Nếu bạn vẫn cần sử dụng PlayFrame
         frame.setSize(1024, 680);
@@ -199,6 +205,15 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
         Cursor cursor=Toolkit.getDefaultToolkit().createCustomCursor(mouse, new java.awt.Point(0,0), "mouse");
         this.setCursor(cursor);
     }
+
+    public int getFoundDifferences() {
+        return foundDifferences;
+    }
+
+    public int getTimeTaken() {
+        return timeTaken;
+    }
+
 
     public void mouseExited(MouseEvent arg0) {}
 
