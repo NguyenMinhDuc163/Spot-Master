@@ -1,5 +1,6 @@
 package client.view;
 
+import client.ClientRun;
 import client.helper.AssetHelper;
 import client.view.game_view.DIYdata;
 import client.view.game_view.MusicPlayer;
@@ -27,6 +28,9 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
     private int timeRemaining;
     private int foundDifferences = 0;  // Số điểm tìm được
     private int timeTaken = 0;         // Thời gian hoàn thành
+    String competitor = "";
+
+
     //Khởi tạo bảng điều khiển trò chơi
     public GameViewNew(PlayFrame frame, String name1, String name2, double[] pointXY)
     {
@@ -71,7 +75,7 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
 
             public void run()
             {
-                int count=30;
+                int count=10000;
                 PlayFrame play_frame=PF;
                 while(count>=0)
                 {
@@ -85,18 +89,29 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
                 }
                 foundDifferences = cl_panel.getFoundDifferences();
                 timeTaken = 30 - timeRemaining;
-                System.out.println("------------------ found" +foundDifferences + " " +  timeTaken + " " + timeRemaining);
+                System.out.println("------------------ found loss" +foundDifferences + " " +  timeTaken + " " + timeRemaining + " competitor " + competitor);
                 //Hiển thị hộp thoại khi hết giờ, sau đó quay lại menu chính
                 JOptionPane.showMessageDialog(play_frame, "Hết giờ rồi. Hãy thử lại xem","Hết giờ",JOptionPane.PLAIN_MESSAGE);
+                ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor);
+                /// TODO dung khi ket thuc
+
+                play_frame.setVisible(false);
+
+// Xóa toàn bộ nội dung hiện tại
                 play_frame.getContentPane().removeAll();
-                ((JPanel)(play_frame.getContentPane())).updateUI();
+                play_frame.getContentPane().revalidate();
                 play_frame.getContentPane().repaint();
-                play_frame.initCover();
+
+
+//                play_frame.getContentPane().removeAll();
+//                ((JPanel)(play_frame.getContentPane())).updateUI();
+//                play_frame.getContentPane().repaint();
+//                play_frame.initCover();
+
             }
         });
         countdown.start();//Bắt đầu luồng đếm ngược
-
-
+        // TODO Man hinh home
         home_button=new ButtonWidget("Menu chính");
         home_button.addActionListener(this);
         JPanel button_panel=new JPanel();
@@ -117,6 +132,25 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
     public GameViewNew() {
 
     }
+
+
+
+
+    public void setInfoPlayer(String username) {
+        // Đặt tên người chơi
+        this.competitor = username;
+        System.out.println("day la Competitor: " + competitor + " " + username);
+        // Hiển thị tên người chơi trên giao diện (nếu cần)
+//        JLabel infoPlayerLabel = new JLabel("Play game with: " + competitor);
+//        infoPlayerLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+//        south_panel.add(infoPlayerLabel, BorderLayout.NORTH);
+//        south_panel.revalidate(); // Cập nhật giao diện để hiển thị thông tin người chơi
+//        south_panel.repaint();
+    }
+
+
+
+
 
     public void actionPerformed(ActionEvent ae) {
         MusicPlayer mp = new MusicPlayer(AssetHelper.MUSIC_CLICK);//Khởi tạo luồng phát âm thanh nhấp chuột
@@ -153,15 +187,25 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
 
             foundDifferences = cl_panel.getFoundDifferences();
             timeTaken = 30 - timeRemaining;
-            System.out.println("------------------ found" +foundDifferences + " " +  timeTaken + " " + timeRemaining);
 
+            // Gửi dữ liệu đến server qua SocketHandler
+            ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor);
 
+            System.out.println("------------------ found win" +foundDifferences + " " +  timeTaken + " " + timeRemaining);
 
+            /// TODO dung khi hoan thanh
+            frame.setVisible(false);  // Ẩn `PlayFrame`
+
+// Xóa nội dung, cập nhật giao diện
             frame.getContentPane().removeAll();
-            ((JPanel)(frame.getContentPane())).updateUI();
-
+            frame.getContentPane().revalidate();
             frame.getContentPane().repaint();
-            frame.initCover();
+
+//            frame.getContentPane().removeAll();
+//            ((JPanel)(frame.getContentPane())).updateUI();
+//
+//            frame.getContentPane().repaint();
+//            frame.initCover();
         }
 
     }
@@ -188,7 +232,15 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
         frame.getContentPane().removeAll();
 
         // Tạo và thêm GameViewNew
-        GameViewNew panel = new GameViewNew(frame, name1.get(index), name2.get(index), pointXY.get(index));
+//        GameViewNew panel = new GameViewNew(frame, name1.get(index), name2.get(index), pointXY.get(index));
+
+        /// TODO Cố dịnh 1 ảnh
+
+        System.out.println("name1: " + name1.get(2));
+        System.out.println("name2: " + name2.get(2));
+        System.out.println("pointXY: " + pointXY.get(2));
+        GameViewNew panel = new GameViewNew(frame, name1.get(2), name2.get(2), pointXY.get(2));
+
         frame.getContentPane().add(panel);
 
         // Cập nhật giao diện để hiển thị màn hình mới

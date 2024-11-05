@@ -138,22 +138,28 @@ public class GameView extends javax.swing.JFrame {
         lbWaiting.setText("Waiting result from server...");
     }
 
+
+
     // TODO vao game
     public void setStartGame (int matchTimeLimit) {
 //        GameViewNew.showGameViewNew();
 
-                    final PlayFrame pf=new PlayFrame();
-                    final SelectPanel sp=new SelectPanel(pf);
-                    pf.initCover();
-                    final MusicPlayer bgm=new MusicPlayer(AssetHelper.MUSIC_BGM);
-                    bgm.start(true);
+//                    final PlayFrame pf=new PlayFrame();
+//                    final SelectPanel sp=new SelectPanel(pf);
+//                    pf.initCover();
+//                    final MusicPlayer bgm=new MusicPlayer(AssetHelper.MUSIC_BGM);
+//                    bgm.start(true);
+//
+//                    pf.addWindowListener(new WindowAdapter(){
+//                        public void windowClosed(WindowEvent we)
+//                        {
+//                            bgm.stop();
+//                        }
+//                    });
 
-                    pf.addWindowListener(new WindowAdapter(){
-                        public void windowClosed(WindowEvent we)
-                        {
-                            bgm.stop();
-                        }
-                    });
+                    GameViewNew game = new GameViewNew();
+                    game.showGameViewNew();
+
 
 //        answer = false;
 //        buttonGroup1.clearSelection();

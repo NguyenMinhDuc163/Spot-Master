@@ -86,8 +86,12 @@ public class ClientRun {
                     gameView.setVisible(true);
                     System.out.printf("Vao game");
                     break;
+//                    GameViewNew game = new GameViewNew();
+//                    game.showGameViewNew();
+//                    break;
                 case gameViewNew:
                     System.out.println("da vao gameviewnew");
+
                     break;
                 default:
                     break;

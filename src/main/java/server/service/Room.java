@@ -117,7 +117,7 @@ public class Room {
             String[] splitted2 = resultClient2.split(";");
             timeClient2 = Integer.parseInt(splitted2[16]);
         }
-
+        System.out.println("Da nhan ket qua tu 2 client " + resultClient1 + " " + resultClient2);
         if (resultClient1 == null & resultClient2 == null) {
             draw();
             return "DRAW";

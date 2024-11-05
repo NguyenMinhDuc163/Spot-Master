@@ -218,8 +218,12 @@ public class SocketHandler {
         sendData("START_GAME;" + loginUser + ";" + userInvited + ";" + roomIdPresent);
     }
 
-    public void submitNewResult(String competitor){
+    public void submitNewResult(String score, String time, String competitor) {
+        System.out.println("Submit new result score: " + score + " time: " + time + " competitor: " + competitor);
         String ans = ClientRun.gameViewNew.getFoundDifferences() + ";" + ClientRun.gameViewNew.getTimeTaken();
+
+        sendData("SUBMIT_RESULT;" + loginUser + ";" + competitor + ";" + roomIdPresent + ";" + ans);
+        ClientRun.gameView.afterSubmit();
     }
 
     public void submitResult (String competitor) { 
@@ -465,9 +469,15 @@ public class SocketHandler {
             String roomId = splitted[4];
             if (JOptionPane.showConfirmDialog(ClientRun.homeView, userHost + " want to play game with you?", "Game?", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_NO_OPTION){
                 ClientRun.openScene(ClientRun.SceneName.GAMEVIEW);
+
+                // TODO set thong tin nguoi choi
                 ClientRun.gameView.setInfoPlayer(userHost);
                 roomIdPresent = roomId;
                 ClientRun.gameView.setStateUserInvited();
+
+                ClientRun.gameViewNew.setInfoPlayer(userHost);
+                roomIdPresent = roomId;
+                System.out.println("da set info player newGame + UserHost: " + userHost);
                 sendData("ACCEPT_PLAY;" + userHost + ";" + userInvited + ";" + roomId);
             } else {
                 sendData("NOT_ACCEPT_PLAY;" + userHost + ";" + userInvited + ";" + roomId);
@@ -486,6 +496,8 @@ public class SocketHandler {
             roomIdPresent = splitted[4];
             ClientRun.openScene(ClientRun.SceneName.GAMEVIEW);
             ClientRun.gameView.setInfoPlayer(userInvited);
+            ClientRun.gameViewNew.setInfoPlayer(userInvited);
+            System.out.println("Khi chap nhan  + UserInvited: " + userInvited);
             ClientRun.gameView.setStateHostRoom();
         }
     }
