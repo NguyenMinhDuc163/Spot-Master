@@ -5,7 +5,6 @@ import client.helper.AssetHelper;
 import client.view.game_view.DIYdata;
 import client.view.game_view.MusicPlayer;
 import client.view.game_view.PlayFrame;
-import client.view.serverLess.GameClient;
 import client.view.widget.ButtonWidget;
 
 import javax.swing.*;
@@ -29,19 +28,54 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
     private int timeRemaining;
     private int foundDifferences = 0;  // Số điểm tìm được
     private int timeTaken = 0;
-    private GameClient gameClient;// Thời gian hoàn thành
+//    private GameClient gameClient;// Thời gian hoàn thành
     String competitor = "";
-
+    ArrayList<String> listImage1 = new ArrayList<>();
+    ArrayList<String> listImage2 = new ArrayList<>();
+    ArrayList<double[]> pointImage = new ArrayList<>();
+    DIYdata diy_data = new DIYdata();
 
     //Khởi tạo bảng điều khiển trò chơi
-    public GameViewNew(PlayFrame frame, String name1, String name2, double[] pointXY)
+    public GameViewNew()
     {
+
+
+
+        PlayFrame frame = new PlayFrame();  // Nếu bạn vẫn cần sử dụng PlayFrame
+        frame.setSize(1024, 680);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        // Phát âm thanh khi bắt đầu trò chơi
+        MusicPlayer mp = new MusicPlayer(AssetHelper.MUSIC_CLICK);
+        mp.start(false);
+
+        // Chọn ngẫu nhiên một màn chơi từ dữ liệu
+
+        diy_data.get(0, listImage1, listImage2, pointImage);  // Lấy dữ liệu trò chơi
+
+        int index = (int) (Math.random() * 5);  // Chọn ngẫu nhiên màn chơi
+
+        // Xóa nội dung hiện tại của JFrame
+        frame.getContentPane().removeAll();
+
+        // Tạo và thêm GameViewNew
+//        GameViewNew panel = new GameViewNew(frame, name1.get(index), name2.get(index), pointXY.get(index));
+
+        /// TODO Cố dịnh 1 ảnh
+
+//        System.out.println("name1: " + name1.get(2));
+//        System.out.println("name2: " + name2.get(2));
+//        System.out.println("pointXY: " + pointXY.get(2));
+
+
+
+
+
         PF=frame;
         this.frame=frame;
-        this.name1=name1;
-        this.name2=name2;
-        this.pointXY=pointXY;
-        this.gameClient = new GameClient(this);
+        this.name1=listImage1.get(2);
+        this.name2=listImage2.get(2);
+        this.pointXY=pointImage.get(2);
         this.addMouseListener(this);
         this.setLayout(new BorderLayout());
         this.setBackground(new Color(56, 152, 248));
@@ -54,8 +88,8 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
         south_panel.setBorder(new EmptyBorder(20,0,20,0));
         south_panel.setBackground(new Color(56, 152, 248));
 
-        cl_panel=new CenterPanel(name1,pointXY); cl_panel.addMouseListener(this);
-        cr_panel=new CenterPanel(name2,pointXY); cr_panel.addMouseListener(this);
+        cl_panel=new CenterPanel(listImage1.get(2),pointImage.get(2)); cl_panel.addMouseListener(this);
+        cr_panel=new CenterPanel(listImage2.get(2),pointImage.get(2)); cr_panel.addMouseListener(this);
         center_panel.add(cl_panel);center_panel.add(cr_panel);
 
         JTextArea tips=new JTextArea();
@@ -73,11 +107,23 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
         pbar.setForeground(new Color(150, 133, 236));
         south_panel.add(pbar);
 
+
+
+        this.frame.getContentPane().add(this);
+
+        // Cập nhật giao diện để hiển thị màn hình mới
+        this.frame.revalidate();
+        this.frame.repaint();
+
+        // Hiển thị frame
+//        this.frame.setVisible(true);
+
+
         countdown=new Thread(new Runnable(){
 
             public void run()
             {
-                int count=10000;
+                int count=30;
                 PlayFrame play_frame=PF;
                 while(count>=0)
                 {
@@ -129,10 +175,6 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
         this.add(label,BorderLayout.NORTH);
 
         frame.setSize(1024,640);
-    }
-
-    public GameViewNew() {
-
     }
 
 
@@ -216,46 +258,59 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
         }
 
     }
-    public void showGameViewNew() {
+    public void showGameViewNew(boolean isShow, int index) {
         // Tạo một cửa sổ (JFrame)
-        PlayFrame frame = new PlayFrame();  // Nếu bạn vẫn cần sử dụng PlayFrame
-        frame.setSize(1024, 680);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//        PlayFrame frame = new PlayFrame();  // Nếu bạn vẫn cần sử dụng PlayFrame
+//        frame.setSize(1024, 680);
+//        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//
+//        // Phát âm thanh khi bắt đầu trò chơi
+//        MusicPlayer mp = new MusicPlayer(AssetHelper.MUSIC_CLICK);
+//        mp.start(false);
+//
+//        // Chọn ngẫu nhiên một màn chơi từ dữ liệu
+//        ArrayList<String> name1 = new ArrayList<>();
+//        ArrayList<String> name2 = new ArrayList<>();
+//        ArrayList<double[]> pointXY = new ArrayList<>();
+//        DIYdata diy_data = new DIYdata();
+//        diy_data.get(0, name1, name2, pointXY);  // Lấy dữ liệu trò chơi
+//
+//        int index = (int) (Math.random() * 5);  // Chọn ngẫu nhiên màn chơi
+//
+//        // Xóa nội dung hiện tại của JFrame
+//        frame.getContentPane().removeAll();
+//
+//        // Tạo và thêm GameViewNew
+////        GameViewNew panel = new GameViewNew(frame, name1.get(index), name2.get(index), pointXY.get(index));
+//
+//        /// TODO Cố dịnh 1 ảnh
+//
+//        System.out.println("name1: " + name1.get(2));
+//        System.out.println("name2: " + name2.get(2));
+//        System.out.println("pointXY: " + pointXY.get(2));
+//        GameViewNew panel = new GameViewNew(frame, name1.get(2), name2.get(2), pointXY.get(2));
+//
+//        frame.getContentPane().add(panel);
+//
+//        // Cập nhật giao diện để hiển thị màn hình mới
+//        frame.revalidate();
+//        frame.repaint();
+//
+//        // Hiển thị frame
 
-        // Phát âm thanh khi bắt đầu trò chơi
-        MusicPlayer mp = new MusicPlayer(AssetHelper.MUSIC_CLICK);
-        mp.start(false);
 
-        // Chọn ngẫu nhiên một màn chơi từ dữ liệu
-        ArrayList<String> name1 = new ArrayList<>();
-        ArrayList<String> name2 = new ArrayList<>();
-        ArrayList<double[]> pointXY = new ArrayList<>();
-        DIYdata diy_data = new DIYdata();
-        diy_data.get(0, name1, name2, pointXY);  // Lấy dữ liệu trò chơi
+        this.name1 = listImage1.get(index);
+        this.name2 = listImage2.get(index);
+        this.pointXY = pointImage.get(index);
 
-        int index = (int) (Math.random() * 5);  // Chọn ngẫu nhiên màn chơi
+        // Cập nhật lại cl_panel và cr_panel với dữ liệu mới
+        cl_panel.updateData(this.name1, this.pointXY);
+        cr_panel.updateData(this.name2, this.pointXY);
 
-        // Xóa nội dung hiện tại của JFrame
-        frame.getContentPane().removeAll();
-
-        // Tạo và thêm GameViewNew
-//        GameViewNew panel = new GameViewNew(frame, name1.get(index), name2.get(index), pointXY.get(index));
-
-        /// TODO Cố dịnh 1 ảnh
-
-        System.out.println("name1: " + name1.get(2));
-        System.out.println("name2: " + name2.get(2));
-        System.out.println("pointXY: " + pointXY.get(2));
-        GameViewNew panel = new GameViewNew(frame, name1.get(2), name2.get(2), pointXY.get(2));
-
-        frame.getContentPane().add(panel);
-
-        // Cập nhật giao diện để hiển thị màn hình mới
-        frame.revalidate();
-        frame.repaint();
-
-        // Hiển thị frame
-        frame.setVisible(true);
+        // Làm mới lại giao diện
+        this.revalidate();
+        this.repaint();
+        this.frame.setVisible(isShow);
     }
     //Thay đổi hình dạng con trỏ chuột thành mũi tên màu đỏ
     public void mouseEntered(MouseEvent arg0) {
@@ -318,6 +373,24 @@ class CenterPanel extends JPanel
         userXY=new double[2]; userXY[0]=-256; userXY[1]=-256;
         user_correct=new ArrayList<Double>();
 
+    }
+
+
+    public void updateData(String newName, double[] newXY) {
+        this.name = newName;
+        this.XY = newXY;
+        this.userXY = new double[2];  // Đặt lại vị trí người dùng nếu cần
+        this.user_correct.clear();    // Xóa dữ liệu điểm đúng
+
+        // Làm mới lại hình ảnh nếu cần
+        Image image = Toolkit.getDefaultToolkit().getImage("D:/DIYdata/" + name);
+        File file = new File("D:/DIYdata/" + name);
+        if (!file.exists()) image = Toolkit.getDefaultToolkit().getImage(AssetHelper.DEFAULT_DATA_PATH + name);
+        imageCopy = image.getScaledInstance(512, 360, Image.SCALE_DEFAULT);
+
+        // Làm mới lại giao diện
+        this.revalidate();
+        this.repaint();
     }
 
     public void judge() {

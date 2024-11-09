@@ -157,8 +157,8 @@ public class GameView extends javax.swing.JFrame {
 //                        }
 //                    });
 
-                    GameViewNew game = new GameViewNew();
-                    game.showGameViewNew();
+//                    GameViewNew game = new GameViewNew();
+//                    game.showGameViewNew();
 
 
 //        answer = false;
