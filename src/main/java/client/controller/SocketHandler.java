@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import client.ClientRun;
+import client.view.GameViewNew;
 import server.helper.LoggerHandler;
 
 public class SocketHandler {
@@ -123,6 +124,9 @@ public class SocketHandler {
                     case "ASK_PLAY_AGAIN":
                         onReceiveAskPlayAgain(received);
                         break;
+                    case "LOCATION":
+                        onReceiveLocation(received);
+                        break;
                         
                     case "EXIT":
                         running = false;
@@ -150,7 +154,12 @@ public class SocketHandler {
         ClientRun.closeAllScene();
         ClientRun.openScene(ClientRun.SceneName.CONNECTSERVER);
     }
-    
+
+    private void onReceiveLocation(String received) {
+        String[] splitted = received.split(";");
+        ClientRun.updateScreen(Integer.parseInt(splitted[1]), Integer.parseInt(splitted[2]));
+    }
+
     /***
      * Handle from client
      */
@@ -224,6 +233,13 @@ public class SocketHandler {
 
         sendData("SUBMIT_RESULT;" + loginUser + ";" + competitor + ";" + roomIdPresent + ";" + ans);
         ClientRun.gameView.afterSubmit();
+    }
+
+
+    public void sendLocation(int x, int y) {
+        String data = "LOCATION;" + x + ";" + y;
+        sendData(data);
+        System.out.println("da gui toi server location + x: " + x + " y: " + y);
     }
 
     public void submitResult (String competitor) { 

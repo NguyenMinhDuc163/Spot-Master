@@ -5,6 +5,7 @@ import client.helper.AssetHelper;
 import client.view.game_view.DIYdata;
 import client.view.game_view.MusicPlayer;
 import client.view.game_view.PlayFrame;
+import client.view.serverLess.GameClient;
 import client.view.widget.ButtonWidget;
 
 import javax.swing.*;
@@ -27,7 +28,8 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
     private Thread countdown;
     private int timeRemaining;
     private int foundDifferences = 0;  // Số điểm tìm được
-    private int timeTaken = 0;         // Thời gian hoàn thành
+    private int timeTaken = 0;
+    private GameClient gameClient;// Thời gian hoàn thành
     String competitor = "";
 
 
@@ -39,7 +41,7 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
         this.name1=name1;
         this.name2=name2;
         this.pointXY=pointXY;
-
+        this.gameClient = new GameClient(this);
         this.addMouseListener(this);
         this.setLayout(new BorderLayout());
         this.setBackground(new Color(56, 152, 248));
@@ -169,6 +171,11 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
         MusicPlayer mp = new MusicPlayer(AssetHelper.MUSIC_CLICK);//Khởi tạo luồng phát âm thanh nhấp chuột
         mp.start(false);
 
+
+        int x = me.getX();
+        int y = me.getY();
+//        gameClient.sendMessage(x + "," + y);
+        ClientRun.socketHandler.sendLocation(x, y);
         //Truyền tọa độ khi nhấp và vẽ lại bảng điều khiển
         cl_panel.userXY[0]=(int)(me.getX());cl_panel.userXY[1]=(int)(me.getY());
         cr_panel.userXY[0]=(int)(me.getX());cr_panel.userXY[1]=(int)(me.getY());
@@ -209,7 +216,7 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
         }
 
     }
-    public  void showGameViewNew() {
+    public void showGameViewNew() {
         // Tạo một cửa sổ (JFrame)
         PlayFrame frame = new PlayFrame();  // Nếu bạn vẫn cần sử dụng PlayFrame
         frame.setSize(1024, 680);
@@ -266,6 +273,21 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
         return timeTaken;
     }
 
+    public void updateOtherPlayerClick(int x, int y) {
+        // Giả sử bạn muốn cập nhật cả hai panel cho các điểm người chơi khác đã nhấp
+        cl_panel.userXY[0] = x;
+        cl_panel.userXY[1] = y;
+        cr_panel.userXY[0] = x;
+        cr_panel.userXY[1] = y;
+
+        // Kiểm tra và thêm điểm khác biệt nếu đúng
+        cl_panel.judge();
+        cr_panel.judge();
+
+        // Vẽ lại giao diện để hiển thị điểm đã click
+        cl_panel.repaint();
+        cr_panel.repaint();
+    }
 
     public void mouseExited(MouseEvent arg0) {}
 

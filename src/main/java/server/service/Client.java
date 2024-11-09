@@ -54,7 +54,7 @@ public class Client implements Runnable {
                 System.out.println(received);
                 LoggerHandler.getInstance().info(received);
 
-
+                System.out.println("server da nhan duoc: " + received);
                 String type = received.split(";")[0];
 
                 switch (type) {
@@ -117,6 +117,9 @@ public class Client implements Runnable {
                     case "ASK_PLAY_AGAIN":
                         onReceiveAskPlayAgain(received);
                         break;
+                    case "LOCATION":
+                        onReceiveLocation(received);
+                        break;
 
                     case "EXIT":
                         running = false;
@@ -154,6 +157,11 @@ public class Client implements Runnable {
 
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private void onReceiveLocation(String received) {
+        System.out.println("da vao location 2"  + received);
+        ServerRun.clientManager.broadcast(received);
     }
 
     // send data functions

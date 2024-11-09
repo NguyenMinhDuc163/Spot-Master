@@ -87,7 +87,7 @@ public class ClientRun {
                     System.out.printf("Vao game");
                     break;
 //                    GameViewNew game = new GameViewNew();
-//                    game.showGameViewNew();
+//                    gameViewNew.showGameViewNew();
 //                    break;
                 case gameViewNew:
                     System.out.println("da vao gameviewnew");
@@ -147,7 +147,10 @@ public class ClientRun {
 
 
     }
+    public static void updateScreen(int x, int y) {
+        gameViewNew.updateOtherPlayerClick(x, y);
 
+    }
     public static void main(String[] args) {
         new ClientRun();
     }

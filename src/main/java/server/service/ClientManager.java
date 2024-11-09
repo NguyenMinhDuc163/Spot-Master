@@ -42,6 +42,7 @@ public class ClientManager {
         clients.forEach((c) -> {
             c.sendData(msg);
         });
+        System.out.println("da gui toi tat ca client");
     }
 
     public void sendToAClient (String username, String msg) {
