@@ -87,7 +87,7 @@ public class ClientRun {
 //                    System.out.printf("Vao game");
 //                    break;
 //                    GameViewNew game = new GameViewNew();
-                    gameViewNew.showGameViewNew(true,4);
+                    gameViewNew.showGameViewNew(true,2);
 
 //                    break;
                 case gameViewNew:

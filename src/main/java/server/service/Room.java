@@ -194,8 +194,8 @@ public class Room {
     }
 
     public void draw() throws SQLException {
-        UserModel user1 = new UserController(dbType).getUser(client1.getLoginUser());  // Sử dụng dbType
-        UserModel user2 = new UserController(dbType).getUser(client2.getLoginUser());  // Sử dụng dbType
+        UserModel user1 = new UserController().getUser(client1.getLoginUser());  // Sử dụng dbType
+        UserModel user2 = new UserController().getUser(client2.getLoginUser());  // Sử dụng dbType
 
         user1.setDraw(user1.getDraw() + 1);
         user2.setDraw(user2.getDraw() + 1);
@@ -212,13 +212,13 @@ public class Room {
         user1.setAvgCompetitor(newAvgCompetitor1);
         user2.setAvgCompetitor(newAvgCompetitor2);
 
-        new UserController(dbType).updateUser(user1);  // Sử dụng dbType
-        new UserController(dbType).updateUser(user2);  // Sử dụng dbType
+        new UserController().updateUser(user1);  // Sử dụng dbType
+        new UserController().updateUser(user2);  // Sử dụng dbType
     }
 
     public void client1Win(int time) throws SQLException {
-        UserModel user1 = new UserController(dbType).getUser(client1.getLoginUser());  // Sử dụng dbType
-        UserModel user2 = new UserController(dbType).getUser(client2.getLoginUser());  // Sử dụng dbType
+        UserModel user1 = new UserController().getUser(client1.getLoginUser());  // Sử dụng dbType
+        UserModel user2 = new UserController().getUser(client2.getLoginUser());  // Sử dụng dbType
 
         user1.setWin(user1.getWin() + 1);
         user2.setLose(user2.getLose() + 1);
@@ -237,13 +237,13 @@ public class Room {
         float newAvgTime1 = (totalMatchUser1 * user1.getAvgTime() + time) / (totalMatchUser1 + 1);
         user1.setAvgTime(newAvgTime1);
 
-        new UserController(dbType).updateUser(user1);  // Sử dụng dbType
-        new UserController(dbType).updateUser(user2);  // Sử dụng dbType
+        new UserController().updateUser(user1);  // Sử dụng dbType
+        new UserController().updateUser(user2);  // Sử dụng dbType
     }
 
     public void client2Win(int time) throws SQLException {
-        UserModel user1 = new UserController(dbType).getUser(client1.getLoginUser());  // Sử dụng dbType
-        UserModel user2 = new UserController(dbType).getUser(client2.getLoginUser());  // Sử dụng dbType
+        UserModel user1 = new UserController().getUser(client1.getLoginUser());  // Sử dụng dbType
+        UserModel user2 = new UserController().getUser(client2.getLoginUser());  // Sử dụng dbType
 
         user2.setWin(user2.getWin() + 1);
         user1.setLose(user1.getLose() + 1);
@@ -262,8 +262,8 @@ public class Room {
         float newAvgTime2 = (totalMatchUser2 * user2.getAvgTime() + time) / (totalMatchUser2 + 1);
         user2.setAvgTime(newAvgTime2);
 
-        new UserController(dbType).updateUser(user1);  // Sử dụng dbType
-        new UserController(dbType).updateUser(user2);  // Sử dụng dbType
+        new UserController().updateUser(user1);  // Sử dụng dbType
+        new UserController().updateUser(user2);  // Sử dụng dbType
     }
 
     public void userLeaveGame(String username) throws SQLException {

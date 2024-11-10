@@ -127,7 +127,9 @@ public class SocketHandler {
                     case "LOCATION":
                         onReceiveLocation(received);
                         break;
-                        
+                    case "SENDPOINT":
+                        onReceivePoint(received);
+                        break;
                     case "EXIT":
                         running = false;
                 }
@@ -153,6 +155,10 @@ public class SocketHandler {
         JOptionPane.showMessageDialog(null, "Mất kết nối tới server", "Lỗi", JOptionPane.ERROR_MESSAGE);
         ClientRun.closeAllScene();
         ClientRun.openScene(ClientRun.SceneName.CONNECTSERVER);
+    }
+
+    private void onReceivePoint(String received) {
+        System.out.println("da nhan duoc point " + received);
     }
 
     private void onReceiveLocation(String received) {
@@ -505,7 +511,6 @@ public class SocketHandler {
         // get status from data
         String[] splitted = received.split(";");
         String status = splitted[1];
-
         if (status.equals("success")) {
             String userHost = splitted[2];
             String userInvited = splitted[3];

@@ -1,5 +1,6 @@
 package server.controller;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import server.connection.DatabaseConnectionFactory;
 import server.connection.IDatabaseConnection;
 import server.helper.LoggerHandler;
@@ -9,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class UserController {
     //  SQL queries
@@ -17,15 +19,18 @@ public class UserController {
     private final String LOGIN_USER = "SELECT username, password, score FROM users WHERE username=? AND password=?";
     private final String GET_INFO_USER = "SELECT username, password, score, win, draw, lose, avgCompetitor, avgTime FROM users WHERE username=?";
     private final String UPDATE_USER = "UPDATE users SET score = ?, win = ?, draw = ?, lose = ?, avgCompetitor = ?, avgTime = ? WHERE username=?";
-
+    private final String dbType;  // Biến lưu loại cơ sở dữ liệu
+    private static Dotenv dotenv = Dotenv.load();
     //  Connection instance
     private final Connection con;
 
     //  Constructor
-    public UserController(String dbType) {
+    public UserController() {
+        this.dbType = dotenv.get("DB_TYPE");
         // Sử dụng factory để chọn loại database kết nối
         IDatabaseConnection dbConnection = DatabaseConnectionFactory.getDatabaseConnection(dbType);
         this.con = dbConnection.getConnection();
+
     }
 
     public String register(String username, String password) {
@@ -158,5 +163,81 @@ public class UserController {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    public void getPointData(int key, ArrayList<String> name1, ArrayList<String> name2, ArrayList<double[]> XY){
+        try {
+
+
+
+            // Truy vấn lấy thông tin từ bảng images
+            String sqlImages = "SELECT id, image_path_1, image_path_2 FROM images";
+            try (PreparedStatement stmtImages = this.con .prepareStatement(sqlImages);
+                 ResultSet rsImages = stmtImages.executeQuery()) {
+
+                while (rsImages.next()) {
+                    int imageId = rsImages.getInt("id");
+                    String image1 = rsImages.getString("image_path_1");
+                    String image2 = rsImages.getString("image_path_2");
+
+                    name1.add(image1);
+                    name2.add(image2);
+
+                    // Lấy các điểm khác biệt cho mỗi imageId từ bảng differences
+                    String sqlDiff = "SELECT x_coordinate, y_coordinate FROM differences WHERE image_id = ?";
+                    try (PreparedStatement stmtDiff = this.con .prepareStatement(sqlDiff)) {
+                        stmtDiff.setInt(1, imageId);
+                        try (ResultSet rsDiff = stmtDiff.executeQuery()) {
+                            double[] points = new double[10];
+                            int index = 0;
+                            while (rsDiff.next() && index < 10) {
+                                points[index] = rsDiff.getDouble("x_coordinate");
+                                points[index + 1] = rsDiff.getDouble("y_coordinate");
+                                index += 2;
+                            }
+                            XY.add(points);
+                        }
+                    }
+                }
+            }
+            System.out.println("Get data successfully: " + XY.size() + " images, " + name1.size() + " differences");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        // Khởi tạo các ArrayList để lưu dữ liệu
+        ArrayList<String> name1 = new ArrayList<>();
+        ArrayList<String> name2 = new ArrayList<>();
+        ArrayList<double[]> pointXY = new ArrayList<>();
+
+        // Tạo đối tượng DIYdata và gọi phương thức get
+        new UserController().getPointData(0, name1, name2, pointXY);
+
+        // In ra kết quả để kiểm tra dữ liệu
+        System.out.println("Dữ liệu kiểm thử từ cơ sở dữ liệu:");
+
+//        for (int i = 0; i < name1.size(); i++) {
+//            System.out.println("Image 1: " + name1.get(i));
+//            System.out.println("Image 2: " + name2.get(i));
+//            System.out.print("Difference Points (x, y): ");
+//            double[] points = pointXY.get(i);
+//            for (int j = 0; j < points.length; j += 2) {
+//                System.out.print("(" + points[j] + ", " + points[j + 1] + ") ");
+//            }
+//            System.out.println("\n-----------------------");
+//        }
+
+        StringBuilder dataToSend = new StringBuilder();
+//        for (int i = 0; i < name1.size(); i++) {
+            dataToSend.append(name1.get(2)).append(";")
+                    .append(name2.get(2)).append(";");
+            for (double coord : pointXY.get(2)) {
+                dataToSend.append(coord).append(";");
+            }
+//        }
+        System.out.println(dataToSend);
     }
 }

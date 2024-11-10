@@ -15,6 +15,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -120,7 +121,9 @@ public class Client implements Runnable {
                     case "LOCATION":
                         onReceiveLocation(received);
                         break;
-
+                    case "SENDPOINT":
+                        onSendPoint();
+                        break;
                     case "EXIT":
                         running = false;
                 }
@@ -159,9 +162,33 @@ public class Client implements Runnable {
         }
     }
 
+    private void onSendPoint() {
+
+        ArrayList<String> name1 = new ArrayList<>();
+        ArrayList<String> name2 = new ArrayList<>();
+        ArrayList<double[]> pointXY = new ArrayList<>();
+
+        // Tạo đối tượng DIYdata và gọi phương thức get
+        new UserController().getPointData(0, name1, name2, pointXY);
+
+        // In ra kết quả để kiểm tra dữ liệu
+        System.out.println("Dữ liệu kiểm thử từ cơ sở dữ liệu:");
+        StringBuilder dataToSend = new StringBuilder();
+//        for (int i = 0; i < name1.size(); i++) {
+        dataToSend.append(name1.get(2)).append(";")
+                .append(name2.get(2)).append(";");
+        for (double coord : pointXY.get(2)) {
+            dataToSend.append(coord).append(";");
+        }
+//        }
+        ServerRun.clientManager.broadcast(dataToSend.toString());
+        System.out.println("da gui dataToSend " + dataToSend);
+    }
+
     private void onReceiveLocation(String received) {
         System.out.println("da vao location 2"  + received);
-        ServerRun.clientManager.broadcast(received);
+
+        ServerRun.clientManager.broadcast( received);
     }
 
     // send data functions
@@ -186,7 +213,7 @@ public class Client implements Runnable {
         String password = splitted[2];
 
         // check login
-        String result = new UserController(dbType).login(username, password);  // Truyền loại cơ sở dữ liệu khi khởi tạo
+        String result = new UserController().login(username, password);  // Truyền loại cơ sở dữ liệu khi khởi tạo
 
         if (result != null && result.split(";")[0].equals("success")) {
             // set login user
@@ -205,7 +232,7 @@ public class Client implements Runnable {
         String password = splitted[2];
 
         // register
-        String result = new UserController(dbType).register(username, password);  // Truyền loại cơ sở dữ liệu khi khởi tạo
+        String result = new UserController().register(username, password);  // Truyền loại cơ sở dữ liệu khi khởi tạo
 
         // send result
         sendData("REGISTER" + ";" + result);
@@ -223,7 +250,7 @@ public class Client implements Runnable {
         String[] splitted = received.split(";");
         String username = splitted[1];
         // get info user
-        String result = new UserController(dbType).getInfoUser(username);  // Truyền loại cơ sở dữ liệu khi khởi tạo
+        String result = new UserController().getInfoUser(username);  // Truyền loại cơ sở dữ liệu khi khởi tạo
 
         String status = "";
         Client c = ServerRun.clientManager.find(username);
@@ -329,8 +356,9 @@ public class Client implements Runnable {
         cCompetitor = ServerRun.clientManager.find(userHost);
         
         // send result
-        String msg = "ACCEPT_PLAY;" + "success;" + userHost + ";" + userInvited + ";" + joinedRoom.getId();
+        String msg = "ACCEPT_PLAY;" + "success;" + userHost + ";" + userInvited + ";" + joinedRoom.getId() ;
         ServerRun.clientManager.sendToAClient(userHost, msg);
+        onSendPoint();
         
     }      
       
@@ -400,11 +428,13 @@ public class Client implements Runnable {
     }
             
     private void onReceiveStartGame(String received) {
+
+        System.out.println("day là received room :" + received);
         String[] splitted = received.split(";");
         String user1 = splitted[1];
         String user2 = splitted[2];
         String roomId = splitted[3];
-        
+
         String question1 = Question.renQuestion();
         String question2 = Question.renQuestion();
         String question3 = Question.renQuestion();
