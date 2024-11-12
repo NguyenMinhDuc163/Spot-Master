@@ -17,6 +17,7 @@ import java.net.Socket;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -427,7 +428,7 @@ public class Client implements Runnable {
         // send result
         sendData("CHECK_STATUS_USER" + ";" + username + ";" + status);
     }
-            
+
     private void onReceiveStartGame(String received) {
 
         System.out.println("day là received room :" + received);
@@ -440,13 +441,13 @@ public class Client implements Runnable {
         String question2 = Question.renQuestion();
         String question3 = Question.renQuestion();
         String question4 = Question.renQuestion();
-        
+
         String data = "START_GAME;success;" + roomId + ";" + question1 + question2 + question3 + question4;
         // Send question here
         joinedRoom.resetRoom();
         joinedRoom.broadcast(data);
         joinedRoom.startGame();
-    } 
+    }
     
     private void onReceiveSubmitResult(String received) throws SQLException {
         System.out.println("da nhan duoc result: " + received);
@@ -454,6 +455,13 @@ public class Client implements Runnable {
         Arrays.stream(s).toList().forEach(System.out::println);
         new UserController().saveGame(s[1], Integer.parseInt(s[4]), Integer.parseInt(s[5]) );
         System.out.println("da save game");
+        String data = "ENDGAME;loss";
+        System.out.println("diem cua user 1: " + s[4]);
+        if(Objects.equals(s[6], "win")){
+            ServerRun.clientManager.sendToAClient(s[2],data);
+        }
+
+
 //        String[] splitted = received.split(";");
 //        String user1 = splitted[1];
 //        String user2 = splitted[2];

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Objects;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -130,6 +131,9 @@ public class SocketHandler {
                     case "SENDPOINT":
                         onReceivePoint(received);
                         break;
+                    case "ENDGAME":
+                        onReceiveEndGame(received);
+                        break;
                     case "EXIT":
                         running = false;
                 }
@@ -155,6 +159,13 @@ public class SocketHandler {
         JOptionPane.showMessageDialog(null, "Mất kết nối tới server", "Lỗi", JOptionPane.ERROR_MESSAGE);
         ClientRun.closeAllScene();
         ClientRun.openScene(ClientRun.SceneName.CONNECTSERVER);
+    }
+
+    private void onReceiveEndGame(String received) {
+        String []s = received.split(";");
+        if(s[1].equals("loss")){
+            ClientRun.gameViewNew.setLossGame();
+        }
     }
 
     private void onReceivePoint(String received) {
@@ -233,11 +244,11 @@ public class SocketHandler {
         sendData("START_GAME;" + loginUser + ";" + userInvited + ";" + roomIdPresent);
     }
 
-    public void submitNewResult(String score, String time, String competitor) {
-        System.out.println("Submit new result score: " + score + " time: " + time + " competitor: " + competitor);
+    public void submitNewResult(String score, String time, String competitor, String status) {
+        System.out.println("Submit new result score: " + score + " time: " + time + " competitor: " + competitor + " status: " + status);
         String ans = ClientRun.gameViewNew.getFoundDifferences() + ";" + ClientRun.gameViewNew.getTimeTaken();
 
-        sendData("SUBMIT_RESULT;" + loginUser + ";" + competitor + ";" + roomIdPresent + ";" + ans);
+        sendData("SUBMIT_RESULT;" + loginUser + ";" + competitor + ";" + roomIdPresent + ";" + ans + ";" + status);
         ClientRun.gameView.afterSubmit();
     }
 

@@ -123,8 +123,7 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
 
             public void run()
             {
-                int count=3000;
-                PlayFrame play_frame=PF;
+                int count=30;
                 while(count>=0)
                 {
                     try{Thread.sleep(1000);}
@@ -139,16 +138,16 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
                 timeTaken = 30 - timeRemaining;
                 System.out.println("------------------ found loss" +foundDifferences + " " +  timeTaken + " " + timeRemaining + " competitor " + competitor);
                 //Hiển thị hộp thoại khi hết giờ, sau đó quay lại menu chính
-                JOptionPane.showMessageDialog(play_frame, "Hết giờ rồi. Hãy thử lại xem","Hết giờ",JOptionPane.PLAIN_MESSAGE);
-                ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor);
+                JOptionPane.showMessageDialog(PF, "Hết giờ rồi. Hãy thử lại xem","Hết giờ",JOptionPane.PLAIN_MESSAGE);
+                ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor, "loss");
                 /// TODO dung khi ket thuc
 
-                play_frame.setVisible(false);
+                PF.setVisible(false);
 
 // Xóa toàn bộ nội dung hiện tại
-                play_frame.getContentPane().removeAll();
-                play_frame.getContentPane().revalidate();
-                play_frame.getContentPane().repaint();
+                PF.getContentPane().removeAll();
+                PF.getContentPane().revalidate();
+                PF.getContentPane().repaint();
 
 
 //                play_frame.getContentPane().removeAll();
@@ -178,7 +177,31 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
     }
 
 
+public void setLossGame() {
+    countdown.interrupt();
+    System.out.println("------------------ found loss" +foundDifferences + " " +  timeTaken + " " + timeRemaining + " competitor " + competitor);
+    //Hiển thị hộp thoại khi hết giờ, sau đó quay lại menu chính
+    ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor, "loss");
+    /// TODO dung khi ket thuc
+    JOptionPane.showMessageDialog(frame, "Chậm mất rồi. Hãy thử lại xem","Thua cuộc",JOptionPane.PLAIN_MESSAGE);
 
+    foundDifferences = cl_panel.getFoundDifferences();
+    timeTaken = 30 - timeRemaining;
+    System.out.println("------------------ found loss" +foundDifferences + " " +  timeTaken + " " + timeRemaining + " competitor " + competitor);
+    //Hiển thị hộp thoại khi hết giờ, sau đó quay lại menu chính
+
+    /// TODO dung khi ket thuc
+
+    PF.setVisible(false);
+
+// Xóa toàn bộ nội dung hiện tại
+    PF.getContentPane().removeAll();
+    PF.getContentPane().revalidate();
+    PF.getContentPane().repaint();
+
+
+
+}
 
     public void setInfoPlayer(String username) {
         // Đặt tên người chơi
@@ -239,7 +262,7 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
 
             System.out.println("------------------ found win 1" +foundDifferences + " " +  timeTaken + " " + timeRemaining);
             // Gửi dữ liệu đến server qua SocketHandler
-            ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor);
+            ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor, "win");
 
             System.out.println("------------------ found win 2" +foundDifferences + " " +  timeTaken + " " + timeRemaining);
 
