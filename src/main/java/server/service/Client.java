@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -448,39 +449,44 @@ public class Client implements Runnable {
     } 
     
     private void onReceiveSubmitResult(String received) throws SQLException {
-        String[] splitted = received.split(";");
-        String user1 = splitted[1];
-        String user2 = splitted[2];
-        String roomId = splitted[3];
-        
-        if (user1.equals(joinedRoom.getClient1().getLoginUser())) {
-            joinedRoom.setResultClient1(received);
-        } else if (user1.equals(joinedRoom.getClient2().getLoginUser())) {
-            joinedRoom.setResultClient2(received);
-        }
-        
-        while (!joinedRoom.getTime().equals("00:00") && joinedRoom.getTime() != null) {
-            System.out.println(joinedRoom.getTime());
-            LoggerHandler.getInstance().info(joinedRoom.getTime());
-
-
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-                LoggerHandler.getInstance().error(ex);
-
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } 
-        
-        String data = "RESULT_GAME;success;" + joinedRoom.handleResultClient() 
-                + ";" + joinedRoom.getClient1().getLoginUser() + ";" + joinedRoom.getClient2().getLoginUser() + ";" + joinedRoom.getId();
-        System.out.println(data);
-        LoggerHandler.getInstance().info(data);
-
-
-        joinedRoom.broadcast(data);
+        System.out.println("da nhan duoc result: " + received);
+        String []s = received.split(";");
+        Arrays.stream(s).toList().forEach(System.out::println);
+        new UserController().saveGame(s[1], Integer.parseInt(s[4]), Integer.parseInt(s[5]) );
+        System.out.println("da save game");
+//        String[] splitted = received.split(";");
+//        String user1 = splitted[1];
+//        String user2 = splitted[2];
+//        String roomId = splitted[3];
+//
+//        if (user1.equals(joinedRoom.getClient1().getLoginUser())) {
+//            joinedRoom.setResultClient1(received);
+//        } else if (user1.equals(joinedRoom.getClient2().getLoginUser())) {
+//            joinedRoom.setResultClient2(received);
+//        }
+//
+//        while (!joinedRoom.getTime().equals("00:00") && joinedRoom.getTime() != null) {
+//            System.out.println(joinedRoom.getTime());
+//            LoggerHandler.getInstance().info(joinedRoom.getTime());
+//
+//
+//            try {
+//                Thread.sleep(2000);
+//            } catch (InterruptedException ex) {
+//                ex.printStackTrace();
+//                LoggerHandler.getInstance().error(ex);
+//
+//                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
+//
+//        String data = "RESULT_GAME;success;" + joinedRoom.handleResultClient()
+//                + ";" + joinedRoom.getClient1().getLoginUser() + ";" + joinedRoom.getClient2().getLoginUser() + ";" + joinedRoom.getId();
+//        System.out.println(data);
+//        LoggerHandler.getInstance().info(data);
+//
+//
+//        joinedRoom.broadcast(data);
     } 
     
     private void onReceiveAskPlayAgain(String received) throws SQLException {

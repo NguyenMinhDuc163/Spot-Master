@@ -245,7 +245,6 @@ public class SocketHandler {
     public void sendLocation(int x, int y) {
         String data = "LOCATION;" + x + ";" + y;
         sendData(data);
-        System.out.println("da gui toi server location + x: " + x + " y: " + y);
     }
 
     public void submitResult (String competitor) { 
@@ -519,6 +518,7 @@ public class SocketHandler {
             ClientRun.gameView.setInfoPlayer(userInvited);
             ClientRun.gameViewNew.setInfoPlayer(userInvited);
             System.out.println("Khi chap nhan  + UserInvited: " + userInvited);
+
             ClientRun.gameView.setStateHostRoom();
         }
     }

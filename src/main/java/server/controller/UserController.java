@@ -6,10 +6,8 @@ import server.connection.IDatabaseConnection;
 import server.helper.LoggerHandler;
 import server.model.UserModel;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class UserController {
@@ -206,38 +204,103 @@ public class UserController {
             e.printStackTrace();
         }
     }
+    public void saveGame(String username, int score, int timeLimit) throws SQLException {
+        String findUserIdQuery = "SELECT userId FROM users WHERE username = ?";
+        PreparedStatement findUserIdStmt = this.con.prepareStatement(findUserIdQuery);
+        findUserIdStmt.setString(1, username);
 
-    public static void main(String[] args) {
+        ResultSet rs = findUserIdStmt.executeQuery();
+
+        if (rs.next()) {
+            int userId = rs.getInt("userId");
+
+            LocalDateTime startTime = LocalDateTime.now();
+            LocalDateTime endTime = startTime.plusMinutes(timeLimit);
+
+            // Chèn vào bảng games
+            String insertGameQuery = "INSERT INTO games (player_id, start_time, end_time, score, time_limit) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement insertGameStmt = this.con.prepareStatement(insertGameQuery, Statement.RETURN_GENERATED_KEYS);
+            insertGameStmt.setInt(1, userId);
+            insertGameStmt.setTimestamp(2, Timestamp.valueOf(startTime));
+            insertGameStmt.setTimestamp(3, Timestamp.valueOf(endTime));
+            insertGameStmt.setInt(4, score);
+            insertGameStmt.setInt(5, timeLimit);
+
+            insertGameStmt.executeUpdate();
+
+            // Lấy game_id của bản ghi mới chèn
+            ResultSet generatedKeys = insertGameStmt.getGeneratedKeys();
+            int gameId = -1;
+            if (generatedKeys.next()) {
+                gameId = generatedKeys.getInt(1);
+            }
+
+            // Lấy difference_id đầu tiên từ bảng differences
+            String findDifferenceIdQuery = "SELECT id FROM differences LIMIT 1";
+            PreparedStatement findDifferenceIdStmt = this.con.prepareStatement(findDifferenceIdQuery);
+            ResultSet diffRs = findDifferenceIdStmt.executeQuery();
+
+            if (diffRs.next()) {
+                int differenceId = diffRs.getInt("id");
+
+                // Chèn bản ghi mới vào bảng game_differences
+                String insertGameDifferenceQuery = "INSERT INTO game_differences (game_id, difference_id, found_time) VALUES (?, ?, ?)";
+                PreparedStatement insertGameDifferenceStmt = this.con.prepareStatement(insertGameDifferenceQuery);
+                insertGameDifferenceStmt.setInt(1, gameId);
+                insertGameDifferenceStmt.setInt(2, differenceId);
+                insertGameDifferenceStmt.setTimestamp(3, Timestamp.valueOf(startTime));
+
+                insertGameDifferenceStmt.executeUpdate();
+                System.out.println("Dữ liệu game_differences đã được lưu thành công!");
+            } else {
+                System.out.println("Không tìm thấy difference_id trong bảng differences.");
+            }
+
+            diffRs.close();
+            findDifferenceIdStmt.close();
+        } else {
+            System.out.println("Không tìm thấy người dùng với username: " + username);
+        }
+
+        rs.close();
+        findUserIdStmt.close();
+    }
+
+    public static void main(String[] args) throws SQLException {
         // Khởi tạo các ArrayList để lưu dữ liệu
         ArrayList<String> name1 = new ArrayList<>();
         ArrayList<String> name2 = new ArrayList<>();
         ArrayList<double[]> pointXY = new ArrayList<>();
 
         // Tạo đối tượng DIYdata và gọi phương thức get
-        new UserController().getPointData(0, name1, name2, pointXY);
+//        new UserController().getPointData(0, name1, name2, pointXY);
 
-        // In ra kết quả để kiểm tra dữ liệu
-        System.out.println("Dữ liệu kiểm thử từ cơ sở dữ liệu:");
+        new UserController().saveGame("a", 0, 30);
 
-//        for (int i = 0; i < name1.size(); i++) {
-//            System.out.println("Image 1: " + name1.get(i));
-//            System.out.println("Image 2: " + name2.get(i));
-//            System.out.print("Difference Points (x, y): ");
-//            double[] points = pointXY.get(i);
-//            for (int j = 0; j < points.length; j += 2) {
-//                System.out.print("(" + points[j] + ", " + points[j + 1] + ") ");
+
+
+//        // In ra kết quả để kiểm tra dữ liệu
+//        System.out.println("Dữ liệu kiểm thử từ cơ sở dữ liệu:");
+//
+////        for (int i = 0; i < name1.size(); i++) {
+////            System.out.println("Image 1: " + name1.get(i));
+////            System.out.println("Image 2: " + name2.get(i));
+////            System.out.print("Difference Points (x, y): ");
+////            double[] points = pointXY.get(i);
+////            for (int j = 0; j < points.length; j += 2) {
+////                System.out.print("(" + points[j] + ", " + points[j + 1] + ") ");
+////            }
+////            System.out.println("\n-----------------------");
+////        }
+//
+//        StringBuilder dataToSend = new StringBuilder();
+////        for (int i = 0; i < name1.size(); i++) {
+//            dataToSend.append(name1.get(2)).append(";")
+//                    .append(name2.get(2)).append(";");
+//            for (double coord : pointXY.get(2)) {
+//                dataToSend.append(coord).append(";");
 //            }
-//            System.out.println("\n-----------------------");
-//        }
-
-        StringBuilder dataToSend = new StringBuilder();
-//        for (int i = 0; i < name1.size(); i++) {
-            dataToSend.append(name1.get(2)).append(";")
-                    .append(name2.get(2)).append(";");
-            for (double coord : pointXY.get(2)) {
-                dataToSend.append(coord).append(";");
-            }
-//        }
-        System.out.println(dataToSend);
+////        }
+//        System.out.println(dataToSend);
     }
 }

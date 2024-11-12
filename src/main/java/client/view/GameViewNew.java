@@ -123,7 +123,7 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
 
             public void run()
             {
-                int count=30;
+                int count=3000;
                 PlayFrame play_frame=PF;
                 while(count>=0)
                 {
@@ -232,15 +232,16 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
         {
             //Dừng luồng đếm ngược, hiển thị hộp thoại hoàn thành và quay lại menu chính
             countdown.interrupt();
-            JOptionPane.showMessageDialog(frame, "Bạn thực sự là người kỳ cựu, đã tìm ra hết các điểm khác biệt","Hoàn thành",JOptionPane.PLAIN_MESSAGE,new ImageIcon("look.png"));
+            JOptionPane.showMessageDialog(frame, "Chúc mừng bạn đã tìm ra hết các điểm khác biệt","Hoàn thành",JOptionPane.PLAIN_MESSAGE,new ImageIcon("look.png"));
 
             foundDifferences = cl_panel.getFoundDifferences();
             timeTaken = 30 - timeRemaining;
 
+            System.out.println("------------------ found win 1" +foundDifferences + " " +  timeTaken + " " + timeRemaining);
             // Gửi dữ liệu đến server qua SocketHandler
             ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor);
 
-            System.out.println("------------------ found win" +foundDifferences + " " +  timeTaken + " " + timeRemaining);
+            System.out.println("------------------ found win 2" +foundDifferences + " " +  timeTaken + " " + timeRemaining);
 
             /// TODO dung khi hoan thanh
             frame.setVisible(false);  // Ẩn `PlayFrame`
