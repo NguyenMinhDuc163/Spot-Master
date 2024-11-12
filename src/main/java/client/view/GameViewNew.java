@@ -130,7 +130,7 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
                     try{Thread.sleep(1000);}
                     catch(Exception e){}
                     pbar.setValue(count--);
-                    String str= new String().format("Thời gian còn lại %d s", pbar.getValue());
+                    String str= String.format("Thời gian còn lại %d s", pbar.getValue());
                     pbar.setString(str);
                     pbar.setStringPainted(true);
                     timeRemaining = count + 1;
@@ -160,11 +160,11 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
         });
         countdown.start();//Bắt đầu luồng đếm ngược
         // TODO Man hinh home
-        home_button=new ButtonWidget("Menu chính");
-        home_button.addActionListener(this);
+//        home_button=new ButtonWidget("Menu chính");
+//        home_button.addActionListener(this);
         JPanel button_panel=new JPanel();
         button_panel.setOpaque(false);
-        button_panel.add(home_button);
+//        button_panel.add(home_button);
         south_panel.add(button_panel);
 
         this.add(south_panel,BorderLayout.SOUTH);
