@@ -453,7 +453,7 @@ public class Client implements Runnable {
         System.out.println("da nhan duoc result: " + received);
         String []s = received.split(";");
         Arrays.stream(s).toList().forEach(System.out::println);
-        new UserController().saveGame(s[1], Integer.parseInt(s[4]), Integer.parseInt(s[5]) );
+        new UserController().saveGame(s[1], Integer.parseInt(s[4]), Integer.parseInt(s[5]), s[6] );
         System.out.println("da save game");
         String data = "ENDGAME;loss";
         System.out.println("diem cua user 1: " + s[4]);

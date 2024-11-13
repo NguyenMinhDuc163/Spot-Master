@@ -204,8 +204,9 @@ public class UserController {
             e.printStackTrace();
         }
     }
-    public void saveGame(String username, int score, int timeLimit) throws SQLException {
-        String findUserIdQuery = "SELECT userId FROM users WHERE username = ?";
+    public void saveGame(String username, int score, int timeLimit, String status) throws SQLException {
+        System.out.println("->>>>>> timeLimit: " + timeLimit);
+        String findUserIdQuery = "SELECT userId, score, win, lose FROM users WHERE username = ?";
         PreparedStatement findUserIdStmt = this.con.prepareStatement(findUserIdQuery);
         findUserIdStmt.setString(1, username);
 
@@ -213,6 +214,9 @@ public class UserController {
 
         if (rs.next()) {
             int userId = rs.getInt("userId");
+            int currentScore = rs.getInt("score");
+            int wins = rs.getInt("win");
+            int losses = rs.getInt("lose");
 
             LocalDateTime startTime = LocalDateTime.now();
             LocalDateTime endTime = startTime.plusMinutes(timeLimit);
@@ -256,6 +260,33 @@ public class UserController {
                 System.out.println("Không tìm thấy difference_id trong bảng differences.");
             }
 
+            // Cập nhật thông tin người dùng dựa trên trạng thái trò chơi
+            if (status.equals("win")) {
+                currentScore += 5;
+                wins += 1;
+            } else if (status.equals("loss")) {
+                losses += 1;
+            }
+            int gamesPlayed = wins + losses;
+            float avgCompetitor = (gamesPlayed > 0) ? (float) currentScore / gamesPlayed : 0;
+
+            // Cập nhật thông tin người dùng
+            String updateUserQuery = "UPDATE users SET score = ?, win = ?, lose = ?, avgCompetitor = ?, avgTime = ? WHERE userId = ?";
+            PreparedStatement updateUserStmt = this.con.prepareStatement(updateUserQuery);
+            updateUserStmt.setFloat(1, currentScore);
+            updateUserStmt.setInt(2, wins);
+            updateUserStmt.setInt(3, losses);
+            updateUserStmt.setFloat(4, avgCompetitor);
+            updateUserStmt.setFloat(5, timeLimit);
+            updateUserStmt.setInt(6, userId);
+
+            updateUserStmt.executeUpdate();
+            System.out.println("Cập nhật thông tin người dùng thành công!");
+
+            // Đóng các tài nguyên
+            generatedKeys.close();
+            insertGameStmt.close();
+            updateUserStmt.close();
             diffRs.close();
             findDifferenceIdStmt.close();
         } else {
@@ -265,7 +296,6 @@ public class UserController {
         rs.close();
         findUserIdStmt.close();
     }
-
     public static void main(String[] args) throws SQLException {
         // Khởi tạo các ArrayList để lưu dữ liệu
         ArrayList<String> name1 = new ArrayList<>();
@@ -275,7 +305,7 @@ public class UserController {
         // Tạo đối tượng DIYdata và gọi phương thức get
 //        new UserController().getPointData(0, name1, name2, pointXY);
 
-        new UserController().saveGame("a", 0, 30);
+//        new UserController().saveGame("a", 0, 30);
 
 
 

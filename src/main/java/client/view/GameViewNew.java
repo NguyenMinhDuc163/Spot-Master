@@ -28,6 +28,7 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
     private int timeRemaining;
     private int foundDifferences = 0;  // Số điểm tìm được
     private int timeTaken = 0;
+    private boolean isEndGame = false;
 //    private GameClient gameClient;// Thời gian hoàn thành
     String competitor = "";
     ArrayList<String> listImage1 = new ArrayList<>();
@@ -36,7 +37,7 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
     DIYdata diy_data = new DIYdata();
 
     //Khởi tạo bảng điều khiển trò chơi
-    public GameViewNew()
+    public GameViewNew(boolean isShow, int level)
     {
 
 
@@ -73,9 +74,9 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
 
         PF=frame;
         this.frame=frame;
-        this.name1=listImage1.get(2);
-        this.name2=listImage2.get(2);
-        this.pointXY=pointImage.get(2);
+        this.name1=listImage1.get(level);
+        this.name2=listImage2.get(level);
+        this.pointXY=pointImage.get(level);
         this.addMouseListener(this);
         this.setLayout(new BorderLayout());
         this.setBackground(new Color(56, 152, 248));
@@ -88,8 +89,8 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
         south_panel.setBorder(new EmptyBorder(20,0,20,0));
         south_panel.setBackground(new Color(56, 152, 248));
 
-        cl_panel=new CenterPanel(listImage1.get(2),pointImage.get(2)); cl_panel.addMouseListener(this);
-        cr_panel=new CenterPanel(listImage2.get(2),pointImage.get(2)); cr_panel.addMouseListener(this);
+        cl_panel=new CenterPanel(this.name1,this.pointXY); cl_panel.addMouseListener(this);
+        cr_panel=new CenterPanel(this.name2,this.pointXY); cr_panel.addMouseListener(this);
         center_panel.add(cl_panel);center_panel.add(cr_panel);
 
         JTextArea tips=new JTextArea();
@@ -136,10 +137,13 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
                 }
                 foundDifferences = cl_panel.getFoundDifferences();
                 timeTaken = 30 - timeRemaining;
-                System.out.println("------------------ found loss" +foundDifferences + " " +  timeTaken + " " + timeRemaining + " competitor " + competitor);
+                System.out.println("------------------timout  found loss" +foundDifferences + " " +  timeTaken + " " + timeRemaining + " competitor " + competitor);
                 //Hiển thị hộp thoại khi hết giờ, sau đó quay lại menu chính
-                JOptionPane.showMessageDialog(PF, "Hết giờ rồi. Hãy thử lại xem","Hết giờ",JOptionPane.PLAIN_MESSAGE);
-                ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor, "loss");
+                if(isShow && !isEndGame){
+                    System.out.println("da gui o day 1");
+                    JOptionPane.showMessageDialog(PF, "Hết giờ rồi. Hãy thử lại xem","Hết giờ",JOptionPane.PLAIN_MESSAGE);
+                    ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor, "loss");
+                }
                 /// TODO dung khi ket thuc
 
                 PF.setVisible(false);
@@ -180,13 +184,17 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
 public void setLossGame() {
     countdown.interrupt();
     System.out.println("------------------ found loss" +foundDifferences + " " +  timeTaken + " " + timeRemaining + " competitor " + competitor);
+    System.out.println("da gui o day 3");
     //Hiển thị hộp thoại khi hết giờ, sau đó quay lại menu chính
+
     ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor, "loss");
     /// TODO dung khi ket thuc
     JOptionPane.showMessageDialog(frame, "Chậm mất rồi. Hãy thử lại xem","Thua cuộc",JOptionPane.PLAIN_MESSAGE);
-
+    isEndGame = true;
     foundDifferences = cl_panel.getFoundDifferences();
     timeTaken = 30 - timeRemaining;
+    System.out.println("time taken: " + timeTaken );
+
     System.out.println("------------------ found loss" +foundDifferences + " " +  timeTaken + " " + timeRemaining + " competitor " + competitor);
     //Hiển thị hộp thoại khi hết giờ, sau đó quay lại menu chính
 
@@ -256,12 +264,14 @@ public void setLossGame() {
             //Dừng luồng đếm ngược, hiển thị hộp thoại hoàn thành và quay lại menu chính
             countdown.interrupt();
             JOptionPane.showMessageDialog(frame, "Chúc mừng bạn đã tìm ra hết các điểm khác biệt","Hoàn thành",JOptionPane.PLAIN_MESSAGE,new ImageIcon("look.png"));
-
+            isEndGame = true;
             foundDifferences = cl_panel.getFoundDifferences();
             timeTaken = 30 - timeRemaining;
 
             System.out.println("------------------ found win 1" +foundDifferences + " " +  timeTaken + " " + timeRemaining);
             // Gửi dữ liệu đến server qua SocketHandler
+            System.out.println("da gui o day 2");
+
             ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor, "win");
 
             System.out.println("------------------ found win 2" +foundDifferences + " " +  timeTaken + " " + timeRemaining);

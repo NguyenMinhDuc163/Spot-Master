@@ -51,7 +51,7 @@ public class ClientRun {
         infoPlayerView = new InfoPlayerView();
         messageView = new MessageView();
         gameView = new GameView();
-        gameViewNew = new GameViewNew();
+        gameViewNew = new GameViewNew(false, 2);
     }
 
     public static void openScene(SceneName sceneName) {
@@ -86,7 +86,7 @@ public class ClientRun {
 //                    gameView.setVisible(true);
 //                    System.out.printf("Vao game");
 //                    break;
-                    gameViewNew = new GameViewNew();
+                    gameViewNew = new GameViewNew(true, 2);
                     gameViewNew.showGameViewNew(true,2);
 
 //                    break;
