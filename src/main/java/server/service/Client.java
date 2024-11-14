@@ -15,11 +15,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 
 public class Client implements Runnable {
@@ -34,6 +33,8 @@ public class Client implements Runnable {
 
     private  String dbType;  // Biến để lưu loại cơ sở dữ liệu
     private static Dotenv dotenv = Dotenv.load();
+    private static ArrayList<Map<String, String>> score = new ArrayList<>();
+
     public Client(Socket s) throws IOException {
         this.s = s;
         this.dbType = dotenv.get("DB_TYPE");;  // Nhận loại cơ sở dữ liệu từ tham số khi khởi tạo
@@ -453,48 +454,62 @@ public class Client implements Runnable {
         System.out.println("da nhan duoc result: " + received);
         String []s = received.split(";");
         Arrays.stream(s).toList().forEach(System.out::println);
-        new UserController().saveGame(s[1], Integer.parseInt(s[4]), Integer.parseInt(s[5]), s[6] );
+
+        score.add(new HashMap<>(Map.of("user", s[2], "score", s[7])));
+        score.forEach(System.out::println);
+        List<Integer> scores = score.stream()
+                .map(entry -> Integer.parseInt(entry.get("score")))
+                .toList();
+        int score1 = 0;
+        int score2 = 0;
+
+        if(score.size() == 2){
+             score1 = scores.get(0);
+             score2 = scores.get(1);
+        }
+//        try {
+//             score2 = scores.get(1);
+//        }catch (Exception e){
+//            // TODO truong hop 1 win luon => thang luon chi có gtri của 1user nên lấy gtri đó
+//            // giải pháp tạm thời ==> có cách tốt hơn mơi sửa
+//             score2 = scores.get(0);
+//             score1 = Integer.parseInt(s[4]);
+//        }
+        String status = "win";
+
         System.out.println("da save game");
         String data = "ENDGAME;loss";
         System.out.println("diem cua user 1: " + s[4]);
         if(Objects.equals(s[6], "win")){
             ServerRun.clientManager.sendToAClient(s[2],data);
+             score2 = scores.getFirst();
+             score1 = Integer.parseInt(s[4]);
+        }
+        else if(score.size() == 2 && (Objects.equals(s[6], "loss") || Objects.equals(s[6], "same"))){
+
+            if (score1 > score2){
+                status = "win";
+                data = "ENDGAME;" + status;
+                ServerRun.clientManager.sendToAClient(s[1],data);
+            }
+            else if (score1 < score2){
+                status = "win";
+                data = "ENDGAME;" + status;
+                ServerRun.clientManager.sendToAClient(s[2],data);
+            }
+            else {
+                System.out.println("da di qua day tu server + " + s[6] + "score1: " + score1 + "score2: " + score2);
+                status = "same";
+                data = "ENDGAME;" + status;
+                ServerRun.clientManager.broadcast(data);
+            }
         }
 
+        if(score.size() == 2){
+            new UserController().saveGame(s[1], score1, Integer.parseInt(s[5]), status,  s[2], score2);
+        }
 
-//        String[] splitted = received.split(";");
-//        String user1 = splitted[1];
-//        String user2 = splitted[2];
-//        String roomId = splitted[3];
 //
-//        if (user1.equals(joinedRoom.getClient1().getLoginUser())) {
-//            joinedRoom.setResultClient1(received);
-//        } else if (user1.equals(joinedRoom.getClient2().getLoginUser())) {
-//            joinedRoom.setResultClient2(received);
-//        }
-//
-//        while (!joinedRoom.getTime().equals("00:00") && joinedRoom.getTime() != null) {
-//            System.out.println(joinedRoom.getTime());
-//            LoggerHandler.getInstance().info(joinedRoom.getTime());
-//
-//
-//            try {
-//                Thread.sleep(2000);
-//            } catch (InterruptedException ex) {
-//                ex.printStackTrace();
-//                LoggerHandler.getInstance().error(ex);
-//
-//                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
-//
-//        String data = "RESULT_GAME;success;" + joinedRoom.handleResultClient()
-//                + ";" + joinedRoom.getClient1().getLoginUser() + ";" + joinedRoom.getClient2().getLoginUser() + ";" + joinedRoom.getId();
-//        System.out.println(data);
-//        LoggerHandler.getInstance().info(data);
-//
-//
-//        joinedRoom.broadcast(data);
     } 
     
     private void onReceiveAskPlayAgain(String received) throws SQLException {

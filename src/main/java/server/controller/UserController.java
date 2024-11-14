@@ -204,24 +204,37 @@ public class UserController {
             e.printStackTrace();
         }
     }
-    public void saveGame(String username, int score, int timeLimit, String status) throws SQLException {
+
+    public void saveGame(String username, int score, int timeLimit, String statusUser, String opponentName, int opponentScore) throws SQLException {
         System.out.println("->>>>>> timeLimit: " + timeLimit);
+
+        // Tìm thông tin người chơi chính
         String findUserIdQuery = "SELECT userId, score, win, lose FROM users WHERE username = ?";
         PreparedStatement findUserIdStmt = this.con.prepareStatement(findUserIdQuery);
         findUserIdStmt.setString(1, username);
-
         ResultSet rs = findUserIdStmt.executeQuery();
 
-        if (rs.next()) {
+        // Tìm thông tin đối thủ
+        String findOpponentIdQuery = "SELECT userId, score, win, lose FROM users WHERE username = ?";
+        PreparedStatement findOpponentIdStmt = this.con.prepareStatement(findOpponentIdQuery);
+        findOpponentIdStmt.setString(1, opponentName);
+        ResultSet opponentRs = findOpponentIdStmt.executeQuery();
+
+        if (rs.next() && opponentRs.next()) {
             int userId = rs.getInt("userId");
-            int currentScore = rs.getInt("score");
-            int wins = rs.getInt("win");
-            int losses = rs.getInt("lose");
+            int userScore = rs.getInt("score");
+            int userWins = rs.getInt("win");
+            int userLosses = rs.getInt("lose");
+
+            int opponentId = opponentRs.getInt("userId");
+            int opponentScoreDb = opponentRs.getInt("score");
+            int opponentWins = opponentRs.getInt("win");
+            int opponentLosses = opponentRs.getInt("lose");
 
             LocalDateTime startTime = LocalDateTime.now();
             LocalDateTime endTime = startTime.plusMinutes(timeLimit);
 
-            // Chèn vào bảng games
+            // Chèn vào bảng games cho người chơi chính
             String insertGameQuery = "INSERT INTO games (player_id, start_time, end_time, score, time_limit) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement insertGameStmt = this.con.prepareStatement(insertGameQuery, Statement.RETURN_GENERATED_KEYS);
             insertGameStmt.setInt(1, userId);
@@ -229,14 +242,25 @@ public class UserController {
             insertGameStmt.setTimestamp(3, Timestamp.valueOf(endTime));
             insertGameStmt.setInt(4, score);
             insertGameStmt.setInt(5, timeLimit);
-
             insertGameStmt.executeUpdate();
 
-            // Lấy game_id của bản ghi mới chèn
+            // Lấy game_id của bản ghi mới chèn cho người chơi chính
             ResultSet generatedKeys = insertGameStmt.getGeneratedKeys();
-            int gameId = -1;
+            int userGameId = -1;
             if (generatedKeys.next()) {
-                gameId = generatedKeys.getInt(1);
+                userGameId = generatedKeys.getInt(1);
+            }
+
+            // Chèn vào bảng games cho đối thủ
+            insertGameStmt.setInt(1, opponentId);
+            insertGameStmt.setInt(4, opponentScore); // Sử dụng score của đối thủ
+            insertGameStmt.executeUpdate();
+
+            // Lấy game_id của bản ghi mới chèn cho đối thủ
+            generatedKeys = insertGameStmt.getGeneratedKeys();
+            int opponentGameId = -1;
+            if (generatedKeys.next()) {
+                opponentGameId = generatedKeys.getInt(1);
             }
 
             // Lấy difference_id đầu tiên từ bảng differences
@@ -247,41 +271,64 @@ public class UserController {
             if (diffRs.next()) {
                 int differenceId = diffRs.getInt("id");
 
-                // Chèn bản ghi mới vào bảng game_differences
+                // Chèn bản ghi mới vào bảng game_differences cho người chơi chính
                 String insertGameDifferenceQuery = "INSERT INTO game_differences (game_id, difference_id, found_time) VALUES (?, ?, ?)";
                 PreparedStatement insertGameDifferenceStmt = this.con.prepareStatement(insertGameDifferenceQuery);
-                insertGameDifferenceStmt.setInt(1, gameId);
+                insertGameDifferenceStmt.setInt(1, userGameId);
                 insertGameDifferenceStmt.setInt(2, differenceId);
                 insertGameDifferenceStmt.setTimestamp(3, Timestamp.valueOf(startTime));
-
                 insertGameDifferenceStmt.executeUpdate();
-                System.out.println("Dữ liệu game_differences đã được lưu thành công!");
+
+                // Chèn bản ghi mới vào bảng game_differences cho đối thủ
+                insertGameDifferenceStmt.setInt(1, opponentGameId);
+                insertGameDifferenceStmt.executeUpdate();
+                System.out.println("Dữ liệu game_differences đã được lưu thành công cho cả hai người chơi!");
             } else {
                 System.out.println("Không tìm thấy difference_id trong bảng differences.");
             }
 
-            // Cập nhật thông tin người dùng dựa trên trạng thái trò chơi
-            if (status.equals("win")) {
-                currentScore += 5;
-                wins += 1;
-            } else if (status.equals("loss")) {
-                losses += 1;
+            // Xử lý cập nhật điểm dựa trên trạng thái trò chơi
+            if (statusUser.equals("win")) {
+                userScore += 10;
+                userWins += 1;
+                opponentLosses += 1;
+            } else if (statusUser.equals("loss")) {
+                opponentScoreDb += 10;
+                opponentWins += 1;
+                userLosses += 1;
+            } else if (statusUser.equals("same")) {
+                userScore += 5;
+                opponentScoreDb += 5;
             }
-            int gamesPlayed = wins + losses;
-            float avgCompetitor = (gamesPlayed > 0) ? (float) currentScore / gamesPlayed : 0;
+
+            // Tính avgCompetitor cho cả người chơi và đối thủ
+            int userGamesPlayed = userWins + userLosses;
+            float userAvgCompetitor = (userGamesPlayed > 0) ? (float) userScore / userGamesPlayed : 0;
+
+            int opponentGamesPlayed = opponentWins + opponentLosses;
+            float opponentAvgCompetitor = (opponentGamesPlayed > 0) ? (float) opponentScoreDb / opponentGamesPlayed : 0;
 
             // Cập nhật thông tin người dùng
             String updateUserQuery = "UPDATE users SET score = ?, win = ?, lose = ?, avgCompetitor = ?, avgTime = ? WHERE userId = ?";
             PreparedStatement updateUserStmt = this.con.prepareStatement(updateUserQuery);
-            updateUserStmt.setFloat(1, currentScore);
-            updateUserStmt.setInt(2, wins);
-            updateUserStmt.setInt(3, losses);
-            updateUserStmt.setFloat(4, avgCompetitor);
+            updateUserStmt.setFloat(1, userScore);
+            updateUserStmt.setInt(2, userWins);
+            updateUserStmt.setInt(3, userLosses);
+            updateUserStmt.setFloat(4, userAvgCompetitor);
             updateUserStmt.setFloat(5, timeLimit);
             updateUserStmt.setInt(6, userId);
-
             updateUserStmt.executeUpdate();
-            System.out.println("Cập nhật thông tin người dùng thành công!");
+
+            // Cập nhật thông tin đối thủ
+            updateUserStmt.setFloat(1, opponentScoreDb);
+            updateUserStmt.setInt(2, opponentWins);
+            updateUserStmt.setInt(3, opponentLosses);
+            updateUserStmt.setFloat(4, opponentAvgCompetitor);
+            updateUserStmt.setFloat(5, timeLimit);
+            updateUserStmt.setInt(6, opponentId);
+            updateUserStmt.executeUpdate();
+
+            System.out.println("Cập nhật thông tin người chơi và đối thủ thành công!");
 
             // Đóng các tài nguyên
             generatedKeys.close();
@@ -290,11 +337,13 @@ public class UserController {
             diffRs.close();
             findDifferenceIdStmt.close();
         } else {
-            System.out.println("Không tìm thấy người dùng với username: " + username);
+            System.out.println("Không tìm thấy người dùng với username hoặc đối thủ: " + username + " / " + opponentName);
         }
 
         rs.close();
+        opponentRs.close();
         findUserIdStmt.close();
+        findOpponentIdStmt.close();
     }
     public static void main(String[] args) throws SQLException {
         // Khởi tạo các ArrayList để lưu dữ liệu
