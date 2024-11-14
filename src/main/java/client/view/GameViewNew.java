@@ -29,18 +29,20 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
     private int foundDifferences = 0;  // Số điểm tìm được
     private int timeTaken = 0;
     private boolean isEndGame = false;
+    private static boolean isShowDialog = false;
+
 //    private GameClient gameClient;// Thời gian hoàn thành
     String competitor = "";
     ArrayList<String> listImage1 = new ArrayList<>();
     ArrayList<String> listImage2 = new ArrayList<>();
     ArrayList<double[]> pointImage = new ArrayList<>();
     DIYdata diy_data = new DIYdata();
+    private int currentPlayerScore = 0;  // Điểm của người chơi hiện tại
+    private int opponentScore = 0;       // Điểm của đối thủ
 
     //Khởi tạo bảng điều khiển trò chơi
     public GameViewNew(boolean isShow, int level)
     {
-
-
 
         PlayFrame frame = new PlayFrame();  // Nếu bạn vẫn cần sử dụng PlayFrame
         frame.setSize(1024, 680);
@@ -140,18 +142,20 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
                 System.out.println("------------------timout  found loss" +foundDifferences + " " +  timeTaken + " " + timeRemaining + " competitor " + competitor);
                 //Hiển thị hộp thoại khi hết giờ, sau đó quay lại menu chính
                 if(isShow && !isEndGame){
-                    System.out.println("da gui o day 1");
-                    JOptionPane.showMessageDialog(PF, "Hết giờ rồi. Hãy thử lại xem","Hết giờ",JOptionPane.PLAIN_MESSAGE);
-                    ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor, "loss");
+//                    System.out.println("da gui o day 1");
+//                    JOptionPane.showMessageDialog(PF, "Hết giờ rồi. Hãy thử lại xem","Hết giờ",JOptionPane.PLAIN_MESSAGE);
+                    ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor, "loss", getOpponentScore());
                 }
-                /// TODO dung khi ket thuc
-
-                PF.setVisible(false);
-
-// Xóa toàn bộ nội dung hiện tại
-                PF.getContentPane().removeAll();
-                PF.getContentPane().revalidate();
-                PF.getContentPane().repaint();
+//
+//                System.out.println("====>getCurrentPlayerScore: " + getCurrentPlayerScore() + " getOpponentScore: " + getOpponentScore());
+//                /// TODO dung khi ket thuc
+//
+//                PF.setVisible(false);
+//
+//// Xóa toàn bộ nội dung hiện tại
+//                PF.getContentPane().removeAll();
+//                PF.getContentPane().revalidate();
+//                PF.getContentPane().repaint();
 
 
 //                play_frame.getContentPane().removeAll();
@@ -181,21 +185,39 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
     }
 
 
-public void setLossGame() {
-    countdown.interrupt();
-    System.out.println("------------------ found loss" +foundDifferences + " " +  timeTaken + " " + timeRemaining + " competitor " + competitor);
-    System.out.println("da gui o day 3");
-    //Hiển thị hộp thoại khi hết giờ, sau đó quay lại menu chính
-
-    ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor, "loss");
+public void setLossGame(String status) {
     /// TODO dung khi ket thuc
-    JOptionPane.showMessageDialog(frame, "Chậm mất rồi. Hãy thử lại xem","Thua cuộc",JOptionPane.PLAIN_MESSAGE);
+    countdown.interrupt();
+    //Hiển thị hộp thoại khi hết giờ, sau đó quay lại menu chính
     isEndGame = true;
     foundDifferences = cl_panel.getFoundDifferences();
     timeTaken = 30 - timeRemaining;
     System.out.println("time taken: " + timeTaken );
 
     System.out.println("------------------ found loss" +foundDifferences + " " +  timeTaken + " " + timeRemaining + " competitor " + competitor);
+    System.out.println("isShowDialog: " + isShowDialog + " status: " + status);
+    if(!isShowDialog){
+        if(status.equals("loss")) {
+            ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor, "loss",  getOpponentScore());
+            JOptionPane.showMessageDialog(frame, "Chậm hơn đối  thủ rồi. Hãy thử lại xem","Thua cuộc",JOptionPane.PLAIN_MESSAGE);
+
+        }else if(status.equals("win")) {
+            ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor, "win",  getOpponentScore());
+
+            JOptionPane.showMessageDialog(frame, "Chúc mừng bạn đã tìm ra hết các điểm khác biệt","Chiến thắng",JOptionPane.PLAIN_MESSAGE,new ImageIcon("look.png"));
+
+        }
+        else if( status.equals("same")) {
+            System.out.println("===> da di  qua day");
+            ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor, "same",  getOpponentScore());
+            JOptionPane.showMessageDialog(frame, "Bạn và đối thủ có số điểm bằng nhau","Hoà",JOptionPane.PLAIN_MESSAGE,new ImageIcon("look.png"));
+
+        }
+        isShowDialog = true;
+    }
+
+
+
     //Hiển thị hộp thoại khi hết giờ, sau đó quay lại menu chính
 
     /// TODO dung khi ket thuc
@@ -210,7 +232,13 @@ public void setLossGame() {
 
 
 }
+    public int getCurrentPlayerScore() {
+        return currentPlayerScore;
+    }
 
+    public int getOpponentScore() {
+        return opponentScore;
+    }
     public void setInfoPlayer(String username) {
         // Đặt tên người chơi
         this.competitor = username;
@@ -258,6 +286,12 @@ public void setLossGame() {
         cl_panel.repaint();
         cr_panel.repaint();
 
+
+        if (cl_panel.judge()) {
+            currentPlayerScore++;
+            System.out.println("====> gia tri getCurrentPlayerScore: " + getCurrentPlayerScore());
+        }
+
         //Sau khi tìm được tất cả năm điểm khác biệt, hiển thị hộp thoại hoàn thành và quay lại menu chính
         if(cl_panel.user_correct.size()==10)
         {
@@ -272,7 +306,7 @@ public void setLossGame() {
             // Gửi dữ liệu đến server qua SocketHandler
             System.out.println("da gui o day 2");
 
-            ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor, "win");
+            ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor, "win",  getOpponentScore());
 
             System.out.println("------------------ found win 2" +foundDifferences + " " +  timeTaken + " " + timeRemaining);
 
@@ -369,6 +403,10 @@ public void setLossGame() {
         cr_panel.userXY[0] = x;
         cr_panel.userXY[1] = y;
 
+        if (cl_panel.judge()) {
+            opponentScore++;
+        }
+
         // Kiểm tra và thêm điểm khác biệt nếu đúng
         cl_panel.judge();
         cr_panel.judge();
@@ -427,44 +465,41 @@ class CenterPanel extends JPanel
         this.repaint();
     }
 
-    public void judge() {
-        Point p0=new Point((int)userXY[0],(int)userXY[1]);//Tọa độ điểm nhấp của người chơi
+    public boolean judge() {
+        Point p0 = new Point((int)userXY[0], (int)userXY[1]);
 
-        //Kiểm tra xem có đúng hay không
-        boolean isCorrect=false;
+        boolean isCorrect = false;
         int i;
-        for(i=0;i<XY.length;i+=2)
-        {
-            Point p=new Point((int)XY[i],(int)XY[i+1]);
-            if(p.distance(p0)<=13)
-            {
-                isCorrect=true;
+        for (i = 0; i < XY.length; i += 2) {
+            Point p = new Point((int)XY[i], (int)XY[i + 1]);
+            if (p.distance(p0) <= 13) {
+                isCorrect = true;
                 break;
             }
         }
 
-        //Kiểm tra xem đã tồn tại chưa (trước đó đã nhấp đúng)
-        boolean exist=false;
-        for(int j=0;j<user_correct.size();j+=2)
-        {
-            Point p=new Point((int)(double)(user_correct.get(j)),(int)(double)(user_correct.get(j+1)));
-            if(p.distance(p0)<=13)
-            {
-                exist=true;
+        boolean exist = false;
+        for (int j = 0; j < user_correct.size(); j += 2) {
+            Point p = new Point((int)(double)(user_correct.get(j)), (int)(double)(user_correct.get(j + 1)));
+            if (p.distance(p0) <= 13) {
+                exist = true;
                 break;
             }
         }
 
-        //Nếu người chơi nhấp vào điểm khác mới, thì thêm tọa độ vào user_correct
-        if(isCorrect&&exist==false)
-        {
+        if (isCorrect && !exist) {
             user_correct.add(XY[i]);
-            user_correct.add(XY[i+1]);
+            user_correct.add(XY[i + 1]);
+            return true;
         }
+        return false;
     }
+
     public int getFoundDifferences() {
         return user_correct.size() / 2; // Mỗi 2 giá trị đại diện cho 1 điểm khác biệt
     }
+
+
 
     //Vẽ bảng điều khiển
     @Override

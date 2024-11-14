@@ -163,9 +163,8 @@ public class SocketHandler {
 
     private void onReceiveEndGame(String received) {
         String []s = received.split(";");
-        if(s[1].equals("loss")){
-            ClientRun.gameViewNew.setLossGame();
-        }
+        System.out.println("Da nhan duoc endgame " + received);
+        ClientRun.gameViewNew.setLossGame(s[1]);
     }
 
     private void onReceivePoint(String received) {
@@ -244,11 +243,11 @@ public class SocketHandler {
         sendData("START_GAME;" + loginUser + ";" + userInvited + ";" + roomIdPresent);
     }
 
-    public void submitNewResult(String score, String time, String competitor, String status) {
+    public void submitNewResult(String score, String time, String competitor, String status, int opponentScore) {
         System.out.println("Submit new result score: " + score + " time: " + time + " competitor: " + competitor + " status: " + status);
         String ans = ClientRun.gameViewNew.getFoundDifferences() + ";" + ClientRun.gameViewNew.getTimeTaken();
 
-        sendData("SUBMIT_RESULT;" + loginUser + ";" + competitor + ";" + roomIdPresent + ";" + ans + ";" + status);
+        sendData("SUBMIT_RESULT;" + loginUser + ";" + competitor + ";" + roomIdPresent + ";" + ans + ";" + status + ";" + opponentScore);
         ClientRun.gameView.afterSubmit();
     }
 
