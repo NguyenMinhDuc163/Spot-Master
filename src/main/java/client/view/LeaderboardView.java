@@ -75,11 +75,7 @@ public class LeaderboardView extends JFrame {
         JScrollPane scrollPane = new JScrollPane(tblLeaderboard);
 
         // Nút xem chi tiết và nút đóng
-        btnViewDetails = new JButton("View Details");
-        btnViewDetails.setFont(new Font("Tahoma", Font.BOLD, 14));
-        btnViewDetails.setBackground(new Color(51, 153, 255));
-        btnViewDetails.setForeground(Color.WHITE);
-        btnViewDetails.addActionListener(evt -> viewPlayerDetails());
+
 
         btnClose = new JButton("Close");
         btnClose.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -91,7 +87,7 @@ public class LeaderboardView extends JFrame {
         });
 
         JPanel pnlBottom = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-        pnlBottom.add(btnViewDetails);
+
         pnlBottom.add(btnClose);
 
         // Thiết lập layout cho JFrame
@@ -259,7 +255,7 @@ public class LeaderboardView extends JFrame {
         socketHandler.connect("127.0.0.1", 2000);
         socketHandler.viewLeaderboard();
 
-        // Dữ liệu test
+        // Dữ liệu giả để thử nghiệm
         String receivedData = "LEADERBOARD;anhtu,10.0,1,0,5;anhtu1,20.0,2,0,4";
         leaderboardView.processLeaderboardData(receivedData);
         leaderboardView.setVisible(true);
