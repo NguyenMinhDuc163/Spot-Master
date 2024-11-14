@@ -17,6 +17,7 @@ public class UserController {
     private final String LOGIN_USER = "SELECT username, password, score FROM users WHERE username=? AND password=?";
     private final String GET_INFO_USER = "SELECT username, password, score, win, draw, lose, avgCompetitor, avgTime FROM users WHERE username=?";
     private final String UPDATE_USER = "UPDATE users SET score = ?, win = ?, draw = ?, lose = ?, avgCompetitor = ?, avgTime = ? WHERE username=?";
+    private final String LEADERBOARD = "SELECT * FROM users WHERE (win + draw + lose) > 0 ORDER BY score DESC";
     private final String dbType;  // Biến lưu loại cơ sở dữ liệu
     private static Dotenv dotenv = Dotenv.load();
     //  Connection instance
@@ -163,6 +164,28 @@ public class UserController {
         return null;
     }
 
+    public ArrayList<UserModel> getLeaderboard(){
+        try {
+            ArrayList<UserModel> userList = new ArrayList<>();
+            PreparedStatement p = con.prepareStatement(LEADERBOARD);
+            ResultSet r = p.executeQuery();
+            while (r.next()) {
+                UserModel user = new UserModel();
+                user.setUserName(r.getString("username"));
+                user.setScore(r.getFloat("score"));
+                user.setWin(r.getInt("win"));
+                user.setDraw(r.getInt("draw"));
+                user.setLose(r.getInt("lose"));
+                userList.add(user);
+            }
+            return userList;
+        } catch (SQLException e) {
+            LoggerHandler.getInstance().warn(String.valueOf(e));
+
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public void getPointData(int key, ArrayList<String> name1, ArrayList<String> name2, ArrayList<double[]> XY){
         try {
