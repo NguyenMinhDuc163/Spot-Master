@@ -9,6 +9,7 @@ import server.ServerRun;
 import server.controller.UserController;
 import server.helper.LoggerHandler;
 import server.helper.Question;
+import server.model.UserModel;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -127,6 +128,9 @@ public class Client implements Runnable {
                     case "SENDPOINT":
                         onSendPoint();
                         break;
+                    case "LEADERBOARD":
+                        onReceiveLeaderboard();
+                        break;
                     case "EXIT":
                         running = false;
                 }
@@ -163,6 +167,14 @@ public class Client implements Runnable {
 
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private void onReceiveLeaderboard() {
+        ArrayList<UserModel> userModels= new UserController().getLeaderboard();
+        for(UserModel i:userModels){
+            System.out.println(i);
+        }
+        sendLeaderboardToClient(userModels);
     }
 
     private void onSendPoint() {
@@ -601,6 +613,37 @@ public class Client implements Runnable {
     public void setJoinedRoom(Room joinedRoom) {
         this.joinedRoom = joinedRoom;
     }
-    
-    
+
+    private void sendLeaderboardToClient(ArrayList<UserModel> userModels) {
+        try {
+            // Tạo chuỗi dữ liệu bảng xếp hạng
+            StringBuilder leaderboardData = new StringBuilder();
+            for (UserModel user : userModels) {
+                leaderboardData.append(user.getUserName())
+                        .append(",") // Tên người chơi
+                        .append(user.getScore())
+                        .append(",") // Điểm
+                        .append(user.getWin())
+                        .append(",") // Thắng
+                        .append(user.getDraw())
+                        .append(",") // Hoà
+                        .append(user.getLose())
+                        .append(";"); // Thua, kết thúc một người chơi
+            }
+
+            // Loại bỏ dấu ";" cuối cùng nếu có
+            if (!leaderboardData.isEmpty()) {
+                leaderboardData.deleteCharAt(leaderboardData.length() - 1);
+            }
+
+            // Tạo chuỗi gửi đi theo định dạng "LEADERBOARD" + ";" + bảng xếp hạng
+            String sendData = "LEADERBOARD" + ";" + leaderboardData.toString();
+
+            // Sử dụng hàm sendData để gửi chuỗi này đi
+            String result = this.sendData(sendData);
+            System.out.println("Leaderboard sent to client: " + result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -134,6 +134,9 @@ public class SocketHandler {
                     case "ENDGAME":
                         onReceiveEndGame(received);
                         break;
+                    case "LEADERBOARD":
+                        onReceiveLeaderboard(received);
+                        break;
                     case "EXIT":
                         running = false;
                 }
@@ -159,6 +162,10 @@ public class SocketHandler {
         JOptionPane.showMessageDialog(null, "Mất kết nối tới server", "Lỗi", JOptionPane.ERROR_MESSAGE);
         ClientRun.closeAllScene();
         ClientRun.openScene(ClientRun.SceneName.CONNECTSERVER);
+    }
+
+    public void viewLeaderboard(){
+        sendData("LEADERBOARD;");
     }
 
     private void onReceiveEndGame(String received) {
@@ -307,6 +314,11 @@ public class SocketHandler {
     /***
      * Handle receive data from server
      */
+    private void onReceiveLeaderboard(String received) {
+        ClientRun.openScene(ClientRun.SceneName.LEADERBOARDVIEW);
+        ClientRun.leaderboardView.processLeaderboardData(received);
+        ClientRun.homeView.setVisible(false);
+    }
     private void onReceiveLogin(String received) {
         // get status from data
         String[] splitted = received.split(";");
