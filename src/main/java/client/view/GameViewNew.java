@@ -61,19 +61,6 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
         // Xóa nội dung hiện tại của JFrame
         frame.getContentPane().removeAll();
 
-        // Tạo và thêm GameViewNew
-//        GameViewNew panel = new GameViewNew(frame, name1.get(index), name2.get(index), pointXY.get(index));
-
-        /// TODO Cố dịnh 1 ảnh
-
-//        System.out.println("name1: " + name1.get(2));
-//        System.out.println("name2: " + name2.get(2));
-//        System.out.println("pointXY: " + pointXY.get(2));
-
-
-
-
-
         PF=frame;
         this.frame=frame;
         this.name1=listImage1.get(level);
@@ -146,32 +133,14 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
 //                    JOptionPane.showMessageDialog(PF, "Hết giờ rồi. Hãy thử lại xem","Hết giờ",JOptionPane.PLAIN_MESSAGE);
                     ClientRun.socketHandler.submitNewResult(String.valueOf(foundDifferences), String.valueOf(timeTaken), competitor, "loss", getOpponentScore());
                 }
-//
-//                System.out.println("====>getCurrentPlayerScore: " + getCurrentPlayerScore() + " getOpponentScore: " + getOpponentScore());
-//                /// TODO dung khi ket thuc
-//
-//                PF.setVisible(false);
-//
-//// Xóa toàn bộ nội dung hiện tại
-//                PF.getContentPane().removeAll();
-//                PF.getContentPane().revalidate();
-//                PF.getContentPane().repaint();
 
-
-//                play_frame.getContentPane().removeAll();
-//                ((JPanel)(play_frame.getContentPane())).updateUI();
-//                play_frame.getContentPane().repaint();
-//                play_frame.initCover();
 
             }
         });
         countdown.start();//Bắt đầu luồng đếm ngược
         // TODO Man hinh home
-//        home_button=new ButtonWidget("Menu chính");
-//        home_button.addActionListener(this);
         JPanel button_panel=new JPanel();
         button_panel.setOpaque(false);
-//        button_panel.add(home_button);
         south_panel.add(button_panel);
 
         this.add(south_panel,BorderLayout.SOUTH);
@@ -243,12 +212,6 @@ public void setLossGame(String status) {
         // Đặt tên người chơi
         this.competitor = username;
         System.out.println("day la Competitor: " + competitor + " " + username);
-        // Hiển thị tên người chơi trên giao diện (nếu cần)
-//        JLabel infoPlayerLabel = new JLabel("Play game with: " + competitor);
-//        infoPlayerLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
-//        south_panel.add(infoPlayerLabel, BorderLayout.NORTH);
-//        south_panel.revalidate(); // Cập nhật giao diện để hiển thị thông tin người chơi
-//        south_panel.repaint();
     }
 
 
@@ -318,58 +281,15 @@ public void setLossGame(String status) {
             frame.getContentPane().revalidate();
             frame.getContentPane().repaint();
 
-//            frame.getContentPane().removeAll();
-//            ((JPanel)(frame.getContentPane())).updateUI();
-//
-//            frame.getContentPane().repaint();
-//            frame.initCover();
         }
 
     }
-    public void showGameViewNew(boolean isShow, int index) {
-        // Tạo một cửa sổ (JFrame)
-//        PlayFrame frame = new PlayFrame();  // Nếu bạn vẫn cần sử dụng PlayFrame
-//        frame.setSize(1024, 680);
-//        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//
-//        // Phát âm thanh khi bắt đầu trò chơi
-//        MusicPlayer mp = new MusicPlayer(AssetHelper.MUSIC_CLICK);
-//        mp.start(false);
-//
-//        // Chọn ngẫu nhiên một màn chơi từ dữ liệu
-//        ArrayList<String> name1 = new ArrayList<>();
-//        ArrayList<String> name2 = new ArrayList<>();
-//        ArrayList<double[]> pointXY = new ArrayList<>();
-//        DIYdata diy_data = new DIYdata();
-//        diy_data.get(0, name1, name2, pointXY);  // Lấy dữ liệu trò chơi
-//
-//        int index = (int) (Math.random() * 5);  // Chọn ngẫu nhiên màn chơi
-//
-//        // Xóa nội dung hiện tại của JFrame
-//        frame.getContentPane().removeAll();
-//
-//        // Tạo và thêm GameViewNew
-////        GameViewNew panel = new GameViewNew(frame, name1.get(index), name2.get(index), pointXY.get(index));
-//
-//        /// TODO Cố dịnh 1 ảnh
-//
-//        System.out.println("name1: " + name1.get(2));
-//        System.out.println("name2: " + name2.get(2));
-//        System.out.println("pointXY: " + pointXY.get(2));
-//        GameViewNew panel = new GameViewNew(frame, name1.get(2), name2.get(2), pointXY.get(2));
-//
-//        frame.getContentPane().add(panel);
-//
-//        // Cập nhật giao diện để hiển thị màn hình mới
-//        frame.revalidate();
-//        frame.repaint();
-//
-//        // Hiển thị frame
+    public void showGameViewNew(boolean isShow, String index) {
+        int idx = Integer.parseInt(index);
 
-
-        this.name1 = listImage1.get(index);
-        this.name2 = listImage2.get(index);
-        this.pointXY = pointImage.get(index);
+        this.name1 = listImage1.get(idx);
+        this.name2 = listImage2.get(idx);
+        this.pointXY = pointImage.get(idx);
 
         // Cập nhật lại cl_panel và cr_panel với dữ liệu mới
         cl_panel.updateData(this.name1, this.pointXY);

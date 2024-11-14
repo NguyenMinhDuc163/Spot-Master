@@ -432,18 +432,27 @@ public class Client implements Runnable {
 
     private void onReceiveStartGame(String received) {
 
+        ArrayList<String> name1 = new ArrayList<>();
+        ArrayList<String> name2 = new ArrayList<>();
+        ArrayList<double[]> pointXY = new ArrayList<>();
+        new UserController().getPointData(0, name1, name2, pointXY);
+        StringBuilder dataToSend = new StringBuilder();
+        dataToSend.append(name1.get(2)).append(";")
+                    .append(name2.get(2)).append(";");
+        for (double coord : pointXY.get(2)) {
+                dataToSend.append(coord).append(";");
+            }
+        System.out.println(dataToSend);
+
         System.out.println("day là received room :" + received);
         String[] splitted = received.split(";");
         String user1 = splitted[1];
         String user2 = splitted[2];
         String roomId = splitted[3];
 
-        String question1 = Question.renQuestion();
-        String question2 = Question.renQuestion();
-        String question3 = Question.renQuestion();
-        String question4 = Question.renQuestion();
 
-        String data = "START_GAME;success;" + roomId + ";" + question1 + question2 + question3 + question4;
+        String data = "START_GAME;success;" + roomId + ";" + dataToSend;
+        ServerRun.clientManager.broadcast(data);
         // Send question here
         joinedRoom.resetRoom();
         joinedRoom.broadcast(data);
@@ -498,13 +507,13 @@ public class Client implements Runnable {
                 ServerRun.clientManager.sendToAClient(s[2],data);
             }
             else {
-                System.out.println("da di qua day tu server + " + s[6] + "score1: " + score1 + "score2: " + score2);
                 status = "same";
                 data = "ENDGAME;" + status;
                 ServerRun.clientManager.broadcast(data);
             }
-        }
 
+        }
+        System.out.println("da di qua day tu server + " + s[6] + "score1: " + score1 + "score2: " + score2);
         if(score.size() == 2){
             new UserController().saveGame(s[1], score1, Integer.parseInt(s[5]), status,  s[2], score2);
         }

@@ -571,43 +571,8 @@ public class SocketHandler {
     private void onReceiveStartGame(String received) {
         // get status from data
         String[] splitted = received.split(";");
-        String status = splitted[1];
-
-        if (status.equals("success")) {
-            String a1 = splitted[3];
-            String b1 = splitted[4];
-            String answer1a = splitted[5];
-            String answer1b = splitted[6];
-            String answer1c = splitted[7];
-            String answer1d = splitted[8];
-            ClientRun.gameView.setQuestion1(a1, b1, answer1a, answer1b, answer1c, answer1d);
-            
-            String a2 = splitted[9];
-            String b2 = splitted[10];
-            String answer2a = splitted[11];
-            String answer2b = splitted[12];
-            String answer2c = splitted[13];
-            String answer2d = splitted[14];
-            ClientRun.gameView.setQuestion2(a2, b2, answer2a, answer2b, answer2c, answer2d);
-            
-            String a3 = splitted[15];
-            String b3 = splitted[16];
-            String answer3a = splitted[17];
-            String answer3b = splitted[18];
-            String answer3c = splitted[19];
-            String answer3d = splitted[20];
-            ClientRun.gameView.setQuestion3(a3, b3, answer3a, answer3b, answer3c, answer3d);
-            
-            String a4 = splitted[21];
-            String b4 = splitted[22];
-            String answer4a = splitted[23];
-            String answer4b = splitted[24];
-            String answer4c = splitted[25];
-            String answer4d = splitted[26];
-            ClientRun.gameView.setQuestion4(a4, b4, answer4a, answer4b, answer4c, answer4d);
-            
-            ClientRun.gameView.setStartGame(30);
-        }
+        String data = splitted[4];
+        ClientRun.gameViewNew.showGameViewNew(true, data);
     }
     
     private void onReceiveResultGame(String received) {
