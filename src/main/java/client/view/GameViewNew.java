@@ -126,7 +126,7 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
 
             public void run()
             {
-                int count=10;
+                int count=30;
                 while(count>=0)
                 {
                     try{Thread.sleep(1000);}
