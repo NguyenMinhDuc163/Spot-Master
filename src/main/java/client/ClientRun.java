@@ -20,7 +20,8 @@ public class ClientRun {
         INFOPLAYER,
         MESSAGEVIEW,
         GAMEVIEW,
-        gameViewNew
+        gameViewNew,
+        LEADERBOARDVIEW
 
     }
 
@@ -33,8 +34,9 @@ public class ClientRun {
     public static InfoPlayerView infoPlayerView;
     public static MessageView messageView;
     public static GameViewNew gameViewNew;
+    public static LeaderboardView leaderboardView;
 
-    // controller 
+    // controller LeaderboardView
     public static SocketHandler socketHandler;
 
     public ClientRun() {
@@ -52,6 +54,7 @@ public class ClientRun {
         messageView = new MessageView();
         gameView = new GameView();
         gameViewNew = new GameViewNew(false, 2);
+        leaderboardView = new LeaderboardView();
     }
 
     public static void openScene(SceneName sceneName) {
@@ -94,6 +97,10 @@ public class ClientRun {
                     System.out.println("da vao gameviewnew");
 
                     break;
+                case LEADERBOARDVIEW:
+                    leaderboardView = new LeaderboardView();
+                    leaderboardView.setVisible(true);
+                    break;
                 default:
                     break;
             }
@@ -126,6 +133,9 @@ public class ClientRun {
                     break;
                 case gameViewNew:
                     break;
+                case LEADERBOARDVIEW:
+                    leaderboardView.dispose();
+                    break;
                 default:
                     break;
             }
@@ -142,6 +152,7 @@ public class ClientRun {
             infoPlayerView.dispose();
             messageView.dispose();
             gameView.dispose();
+            leaderboardView.dispose();
         } else {
             System.out.println("[WARNING]: Chạy trong chế độ headless, không khởi tạo giao diện đồ họa.");
         }
