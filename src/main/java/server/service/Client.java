@@ -11,12 +11,14 @@ import server.helper.LoggerHandler;
 import server.helper.Question;
 import server.model.UserModel;
 
+import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -440,6 +442,7 @@ public class Client implements Runnable {
         }
         // send result
         sendData("CHECK_STATUS_USER" + ";" + username + ";" + status);
+        new UserController().getDataPoint(1);
     }
 
     private void onReceiveStartGame(String received) {
@@ -488,14 +491,7 @@ public class Client implements Runnable {
              score1 = scores.get(0);
              score2 = scores.get(1);
         }
-//        try {
-//             score2 = scores.get(1);
-//        }catch (Exception e){
-//            // TODO truong hop 1 win luon => thang luon chi có gtri của 1user nên lấy gtri đó
-//            // giải pháp tạm thời ==> có cách tốt hơn mơi sửa
-//             score2 = scores.get(0);
-//             score1 = Integer.parseInt(s[4]);
-//        }
+
         String status = "win";
 
         System.out.println("da save game");
@@ -530,7 +526,7 @@ public class Client implements Runnable {
             new UserController().saveGame(s[1], score1, Integer.parseInt(s[5]), status,  s[2], score2);
         }
 
-//
+
     } 
     
     private void onReceiveAskPlayAgain(String received) throws SQLException {
@@ -579,9 +575,41 @@ public class Client implements Runnable {
             LoggerHandler.getInstance().error(new Exception());
 
         }
+
+        judge(new double[]{0,0,0,0}, new double[]{0,0}, new ArrayList<>());
     }
-        
-    
+
+    public static boolean judge(double[] XY,double[] userXY, ArrayList<Double> user_correct) {
+        Point p0 = new Point((int)userXY[0], (int)userXY[1]);
+
+        boolean isCorrect = false;
+        int i;
+        for (i = 0; i < XY.length; i += 2) {
+            Point p = new Point((int)XY[i], (int)XY[i + 1]);
+            if (p.distance(p0) <= 13) {
+                isCorrect = true;
+                break;
+            }
+        }
+
+        boolean exist = false;
+        for (int j = 0; j < user_correct.size(); j += 2) {
+            Point p = new Point((int)(double)(user_correct.get(j)), (int)(double)(user_correct.get(j + 1)));
+            if (p.distance(p0) <= 13) {
+                exist = true;
+                break;
+            }
+        }
+
+        if (isCorrect && !exist) {
+            user_correct.add(XY[i]);
+            user_correct.add(XY[i + 1]);
+            return true;
+        }
+        return false;
+    }
+
+
     // Close app
     private void onReceiveClose() {
         this.loginUser = null;

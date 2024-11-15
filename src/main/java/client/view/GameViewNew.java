@@ -238,7 +238,7 @@ public void setLossGame(String status) {
 
         int x = me.getX();
         int y = me.getY();
-//        gameClient.sendMessage(x + "," + y);
+        // TODO gui du lieu den server
         ClientRun.socketHandler.sendLocation(x, y);
         //Truyền tọa độ khi nhấp và vẽ lại bảng điều khiển
         cl_panel.userXY[0]=(int)(me.getX());cl_panel.userXY[1]=(int)(me.getY());
@@ -375,8 +375,8 @@ class CenterPanel extends JPanel
         this.user_correct.clear();    // Xóa dữ liệu điểm đúng
 
         // Làm mới lại hình ảnh nếu cần
-        Image image = Toolkit.getDefaultToolkit().getImage("D:/DIYdata/" + name);
-        File file = new File("D:/DIYdata/" + name);
+        Image image = Toolkit.getDefaultToolkit().getImage("D:/NguyenDuc/" + name);
+        File file = new File("D:/NguyenDuc/" + name);
         if (!file.exists()) image = Toolkit.getDefaultToolkit().getImage(AssetHelper.DEFAULT_DATA_PATH + name);
         imageCopy = image.getScaledInstance(512, 360, Image.SCALE_DEFAULT);
 
@@ -385,6 +385,7 @@ class CenterPanel extends JPanel
         this.repaint();
     }
 
+    //TODO logic game
     public boolean judge() {
         Point p0 = new Point((int)userXY[0], (int)userXY[1]);
 

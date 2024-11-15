@@ -8,8 +8,10 @@ import client.view.game_view.PlayFrame;
 import client.view.game_view.SelectPanel;
 import server.helper.LoggerHandler;
 
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 public class ClientRun {
     public enum SceneName {
@@ -158,6 +160,36 @@ public class ClientRun {
     public static void updateScreen(int x, int y) {
         gameViewNew.updateOtherPlayerClick(x, y);
 
+    }
+
+    public static boolean judge(double[] XY,double[] userXY, ArrayList<Double> user_correct) {
+        Point p0 = new Point((int)userXY[0], (int)userXY[1]);
+
+        boolean isCorrect = false;
+        int i;
+        for (i = 0; i < XY.length; i += 2) {
+            Point p = new Point((int)XY[i], (int)XY[i + 1]);
+            if (p.distance(p0) <= 13) {
+                isCorrect = true;
+                break;
+            }
+        }
+
+        boolean exist = false;
+        for (int j = 0; j < user_correct.size(); j += 2) {
+            Point p = new Point((int)(double)(user_correct.get(j)), (int)(double)(user_correct.get(j + 1)));
+            if (p.distance(p0) <= 13) {
+                exist = true;
+                break;
+            }
+        }
+
+        if (isCorrect && !exist) {
+            user_correct.add(XY[i]);
+            user_correct.add(XY[i + 1]);
+            return true;
+        }
+        return false;
     }
     public static void main(String[] args) {
         new ClientRun();

@@ -31,7 +31,7 @@ public class ConnectServer extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setText("CONNECT TO SERVER");
 
-        txIP.setEditable(false);
+        txIP.setEditable(true);
         txIP.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txIP.setText("127.0.0.1");
 
@@ -41,7 +41,7 @@ public class ConnectServer extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel3.setText("PORT");
 
-        txPort.setEditable(false);
+        txPort.setEditable(true);
         txPort.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txPort.setText("2000");
 

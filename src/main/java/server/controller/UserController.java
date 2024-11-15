@@ -368,6 +368,38 @@ public class UserController {
         findUserIdStmt.close();
         findOpponentIdStmt.close();
     }
+
+
+    public  void getDataPoint(int level){
+        ArrayList<String> name1 = new ArrayList<>();
+        ArrayList<String> name2 = new ArrayList<>();
+        ArrayList<double[]> pointXY = new ArrayList<>();
+
+        // Tạo đối tượng DIYdata và gọi phương thức get
+        new UserController().getPointData(level, name1, name2, pointXY);
+
+
+//        for (int i = 0; i < name1.size(); i++) {
+//            System.out.println("Image 1: " + name1.get(i));
+//            System.out.println("Image 2: " + name2.get(i));
+//            System.out.print("Difference Points (x, y): ");
+//            double[] points = pointXY.get(i);
+//            for (int j = 0; j < points.length; j += 2) {
+//                System.out.print("(" + points[j] + ", " + points[j + 1] + ") ");
+//            }
+//            System.out.println("\n-----------------------");
+//        }
+
+        StringBuilder dataToSend = new StringBuilder();
+        dataToSend.append(name1.get(2)).append(";")
+                .append(name2.get(2)).append(";");
+        for (double coord : pointXY.get(2)) {
+            dataToSend.append(coord).append(";");
+        }
+        System.out.println(dataToSend);
+
+    }
+
     public static void main(String[] args) throws SQLException {
         // Khởi tạo các ArrayList để lưu dữ liệu
         ArrayList<String> name1 = new ArrayList<>();
@@ -375,34 +407,34 @@ public class UserController {
         ArrayList<double[]> pointXY = new ArrayList<>();
 
         // Tạo đối tượng DIYdata và gọi phương thức get
-//        new UserController().getPointData(0, name1, name2, pointXY);
+        new UserController().getPointData(0, name1, name2, pointXY);
 
 //        new UserController().saveGame("a", 0, 30);
 
 
 
-//        // In ra kết quả để kiểm tra dữ liệu
-//        System.out.println("Dữ liệu kiểm thử từ cơ sở dữ liệu:");
-//
-////        for (int i = 0; i < name1.size(); i++) {
-////            System.out.println("Image 1: " + name1.get(i));
-////            System.out.println("Image 2: " + name2.get(i));
-////            System.out.print("Difference Points (x, y): ");
-////            double[] points = pointXY.get(i);
-////            for (int j = 0; j < points.length; j += 2) {
-////                System.out.print("(" + points[j] + ", " + points[j + 1] + ") ");
-////            }
-////            System.out.println("\n-----------------------");
-////        }
-//
-//        StringBuilder dataToSend = new StringBuilder();
-////        for (int i = 0; i < name1.size(); i++) {
-//            dataToSend.append(name1.get(2)).append(";")
-//                    .append(name2.get(2)).append(";");
-//            for (double coord : pointXY.get(2)) {
-//                dataToSend.append(coord).append(";");
+        // In ra kết quả để kiểm tra dữ liệu
+        System.out.println("Dữ liệu kiểm thử từ cơ sở dữ liệu:");
+
+//        for (int i = 0; i < name1.size(); i++) {
+//            System.out.println("Image 1: " + name1.get(i));
+//            System.out.println("Image 2: " + name2.get(i));
+//            System.out.print("Difference Points (x, y): ");
+//            double[] points = pointXY.get(i);
+//            for (int j = 0; j < points.length; j += 2) {
+//                System.out.print("(" + points[j] + ", " + points[j + 1] + ") ");
 //            }
-////        }
-//        System.out.println(dataToSend);
+//            System.out.println("\n-----------------------");
+//        }
+
+        StringBuilder dataToSend = new StringBuilder();
+//        for (int i = 0; i < name1.size(); i++) {
+            dataToSend.append(name1.get(2)).append(";")
+                    .append(name2.get(2)).append(";");
+            for (double coord : pointXY.get(2)) {
+                dataToSend.append(coord).append(";");
+            }
+//        }
+        System.out.println(dataToSend);
     }
 }
