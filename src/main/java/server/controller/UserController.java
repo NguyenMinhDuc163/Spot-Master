@@ -379,17 +379,6 @@ public class UserController {
         new UserController().getPointData(level, name1, name2, pointXY);
 
 
-//        for (int i = 0; i < name1.size(); i++) {
-//            System.out.println("Image 1: " + name1.get(i));
-//            System.out.println("Image 2: " + name2.get(i));
-//            System.out.print("Difference Points (x, y): ");
-//            double[] points = pointXY.get(i);
-//            for (int j = 0; j < points.length; j += 2) {
-//                System.out.print("(" + points[j] + ", " + points[j + 1] + ") ");
-//            }
-//            System.out.println("\n-----------------------");
-//        }
-
         StringBuilder dataToSend = new StringBuilder();
         dataToSend.append(name1.get(2)).append(";")
                 .append(name2.get(2)).append(";");

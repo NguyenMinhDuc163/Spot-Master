@@ -37,6 +37,10 @@ public class Client implements Runnable {
     private  String dbType;  // Biến để lưu loại cơ sở dữ liệu
     private static Dotenv dotenv = Dotenv.load();
     private static ArrayList<Map<String, String>> score = new ArrayList<>();
+    private ArrayList<String> name1 = new ArrayList<>();
+    private ArrayList<String> name2 = new ArrayList<>();
+    private ArrayList<double[]> pointXY = new ArrayList<>();
+
 
     public Client(Socket s) throws IOException {
         this.s = s;
@@ -204,8 +208,10 @@ public class Client implements Runnable {
 
     private void onReceiveLocation(String received) {
         System.out.println("da vao location 2"  + received);
-
-        ServerRun.clientManager.broadcast( received);
+        String[] splitted = received.split(";");
+        boolean isCheck = judge(new double[]{0,0,0,0}, new double[]{Double.parseDouble(splitted[1]), Double.parseDouble(splitted[2])}, new ArrayList<>());
+        if(isCheck)
+            ServerRun.clientManager.broadcast( received);
     }
 
     // send data functions
@@ -447,9 +453,7 @@ public class Client implements Runnable {
 
     private void onReceiveStartGame(String received) {
 
-        ArrayList<String> name1 = new ArrayList<>();
-        ArrayList<String> name2 = new ArrayList<>();
-        ArrayList<double[]> pointXY = new ArrayList<>();
+
         new UserController().getPointData(0, name1, name2, pointXY);
         StringBuilder dataToSend = new StringBuilder();
         dataToSend.append(name1.get(2)).append(";")
@@ -580,6 +584,9 @@ public class Client implements Runnable {
     }
 
     public static boolean judge(double[] XY,double[] userXY, ArrayList<Double> user_correct) {
+
+
+
         Point p0 = new Point((int)userXY[0], (int)userXY[1]);
 
         boolean isCorrect = false;
