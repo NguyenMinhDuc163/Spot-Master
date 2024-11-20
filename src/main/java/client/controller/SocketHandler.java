@@ -1,9 +1,6 @@
 package client.controller;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -172,28 +169,57 @@ public class SocketHandler {
 
     private void onReceiveImage() {
         try {
-            String outputPath = "src/main/java/client/image/image_03.jpg"; // Lưu ảnh tại đây
+            String saveDirectory = "src/main/java/client/image/";
+            File dir = new File(saveDirectory);
+            if (!dir.exists()) dir.mkdirs();
 
-            // Nhận kích thước tệp
-            long fileSize = dis.readLong();
-            System.out.println("Kích thước ảnh nhận được: " + fileSize);
+            int imageCount = dis.readInt(); // Nhận số lượng ảnh
+            System.out.println("Số lượng ảnh cần nhận: " + imageCount);
 
-            // Nhận dữ liệu ảnh
-            try (FileOutputStream fos = new FileOutputStream(outputPath)) {
-                byte[] buffer = new byte[4096];
-                int bytesRead;
-                long totalBytesRead = 0;
-
-                while (totalBytesRead < fileSize && (bytesRead = dis.read(buffer)) != -1) {
-                    fos.write(buffer, 0, bytesRead);
-                    totalBytesRead += bytesRead;
+            for (int i = 0; i < imageCount; i++) {
+                String partKey = dis.readUTF(); // Nhận key
+                if (!"IMAGE_PART".equals(partKey)) {
+                    System.err.println("Lỗi: Key không khớp, mong đợi IMAGE_PART nhưng nhận được: " + partKey);
+                    break;
                 }
+
+                String fileName = dis.readUTF();  // Nhận tên ảnh
+                long fileSize = dis.readLong();  // Nhận kích thước ảnh
+                System.out.println("Nhận ảnh: " + fileName + " (" + fileSize + " bytes)");
+
+                // Nhận nội dung ảnh
+                try (FileOutputStream fos = new FileOutputStream(saveDirectory + fileName)) {
+                    byte[] buffer = new byte[4096];
+                    long totalBytesRead = 0;
+                    int bytesRead;
+
+                    while (totalBytesRead < fileSize && (bytesRead = dis.read(buffer)) != -1) {
+                        fos.write(buffer, 0, bytesRead);
+                        totalBytesRead += bytesRead;
+                    }
+
+                    if (totalBytesRead != fileSize) {
+                        System.err.println("Ảnh bị thiếu: " + fileName +
+                                " (" + totalBytesRead + "/" + fileSize + ")");
+                    } else {
+                        System.out.println("Đã lưu ảnh: " + fileName);
+                    }
+                }
+
+                // Gửi ACK
+                dos.writeUTF("ACK");
             }
-            System.out.println("Ảnh đã được lưu tại: " + outputPath);
+
+            String endKey = dis.readUTF();
+            if (!"END_IMAGE_TRANSMISSION".equals(endKey)) {
+                System.err.println("Lỗi: Không nhận được thông báo kết thúc.");
+            }
         } catch (IOException e) {
+            System.err.println("Lỗi khi nhận ảnh: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
 
     public void viewLeaderboard(){
         sendData("LEADERBOARD;");

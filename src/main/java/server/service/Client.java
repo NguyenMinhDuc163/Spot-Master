@@ -177,37 +177,54 @@ public class Client implements Runnable {
 
 
     private void onSendImage() {
-        try {
-            String imagePath = "src/main/java/server/image/image_01.jpg"; // Đường dẫn ảnh
-            File file = new File(imagePath);
+        String[] imagePaths = {
+                "src/main/java/server/image/image_01.jpg",
+                "src/main/java/server/image/image_01_diff.jpg"
+        };
 
-            // Gửi thông báo bắt đầu gửi ảnh tới tất cả Client
+        try {
             for (Client client : ServerRun.clientManager.clients) {
+                DataInputStream clientDis = client.dis; // Luồng nhận từ Client
                 DataOutputStream clientDos = client.dos;
 
-                // Gửi thông báo bắt đầu
+                // Gửi key bắt đầu
                 clientDos.writeUTF("SEND_IMAGE_START");
+                clientDos.writeInt(imagePaths.length);
 
-                // Gửi kích thước tệp
-                clientDos.writeLong(file.length());
+                for (String imagePath : imagePaths) {
+                    File file = new File(imagePath);
 
-                // Gửi dữ liệu ảnh
-                try (FileInputStream fis = new FileInputStream(file)) {
-                    byte[] buffer = new byte[4096];
-                    int bytesRead;
-                    while ((bytesRead = fis.read(buffer)) != -1) {
-                        clientDos.write(buffer, 0, bytesRead);
+                    // Gửi thông tin ảnh
+                    clientDos.writeUTF("IMAGE_PART");
+                    clientDos.writeUTF(file.getName());
+                    clientDos.writeLong(file.length());
+
+                    // Gửi nội dung ảnh
+                    try (FileInputStream fis = new FileInputStream(file)) {
+                        byte[] buffer = new byte[4096];
+                        int bytesRead;
+                        while ((bytesRead = fis.read(buffer)) != -1) {
+                            clientDos.write(buffer, 0, bytesRead);
+                        }
+                    }
+
+                    System.out.println("Đã gửi xong ảnh: " + file.getName());
+
+                    // Chờ ACK từ Client
+                    String ack = clientDis.readUTF();
+                    if (!"ACK".equals(ack)) {
+                        System.err.println("Không nhận được ACK từ Client!");
+                        break;
                     }
                 }
-                clientDos.flush();
-                System.out.println("Đã gửi ảnh tới: " + client.getLoginUser());
+
+                // Gửi kết thúc
+                clientDos.writeUTF("END_IMAGE_TRANSMISSION");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
 
 
 
