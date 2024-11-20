@@ -12,9 +12,7 @@ import server.helper.Question;
 import server.model.UserModel;
 
 import java.awt.*;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.*;
@@ -136,6 +134,8 @@ public class Client implements Runnable {
                         break;
                     case "LEADERBOARD":
                         onReceiveLeaderboard();
+                    case "SEND_IMAGE":
+                        onSendImage();
                         break;
                     case "EXIT":
                         running = false;
@@ -174,6 +174,43 @@ public class Client implements Runnable {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+
+    private void onSendImage() {
+        try {
+            String imagePath = "src/main/java/server/image/image_01.jpg"; // Đường dẫn ảnh
+            File file = new File(imagePath);
+
+            // Gửi thông báo bắt đầu gửi ảnh tới tất cả Client
+            for (Client client : ServerRun.clientManager.clients) {
+                DataOutputStream clientDos = client.dos;
+
+                // Gửi thông báo bắt đầu
+                clientDos.writeUTF("SEND_IMAGE_START");
+
+                // Gửi kích thước tệp
+                clientDos.writeLong(file.length());
+
+                // Gửi dữ liệu ảnh
+                try (FileInputStream fis = new FileInputStream(file)) {
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = fis.read(buffer)) != -1) {
+                        clientDos.write(buffer, 0, bytesRead);
+                    }
+                }
+                clientDos.flush();
+                System.out.println("Đã gửi ảnh tới: " + client.getLoginUser());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
 
     private void onReceiveLeaderboard() {
         ArrayList<UserModel> userModels= new UserController().getLeaderboard();
@@ -246,6 +283,7 @@ public class Client implements Runnable {
         // send result
         sendData("LOGIN" + ";" + result);
         onReceiveGetListOnline();
+//        onSendImage();
     }
 
     private void onReceiveRegister(String received) {
@@ -382,6 +420,7 @@ public class Client implements Runnable {
         String msg = "ACCEPT_PLAY;" + "success;" + userHost + ";" + userInvited + ";" + joinedRoom.getId() ;
         ServerRun.clientManager.sendToAClient(userHost, msg);
         onSendPoint();
+        onSendImage();
         
     }      
       

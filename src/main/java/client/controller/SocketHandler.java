@@ -2,6 +2,7 @@ package client.controller;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -137,6 +138,9 @@ public class SocketHandler {
                     case "LEADERBOARD":
                         onReceiveLeaderboard(received);
                         break;
+                    case "SEND_IMAGE_START":
+                        onReceiveImage();
+                        break;
                     case "EXIT":
                         running = false;
                 }
@@ -162,6 +166,33 @@ public class SocketHandler {
         JOptionPane.showMessageDialog(null, "Mất kết nối tới server", "Lỗi", JOptionPane.ERROR_MESSAGE);
         ClientRun.closeAllScene();
         ClientRun.openScene(ClientRun.SceneName.CONNECTSERVER);
+    }
+
+
+
+    private void onReceiveImage() {
+        try {
+            String outputPath = "src/main/java/client/image/image_03.jpg"; // Lưu ảnh tại đây
+
+            // Nhận kích thước tệp
+            long fileSize = dis.readLong();
+            System.out.println("Kích thước ảnh nhận được: " + fileSize);
+
+            // Nhận dữ liệu ảnh
+            try (FileOutputStream fos = new FileOutputStream(outputPath)) {
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                long totalBytesRead = 0;
+
+                while (totalBytesRead < fileSize && (bytesRead = dis.read(buffer)) != -1) {
+                    fos.write(buffer, 0, bytesRead);
+                    totalBytesRead += bytesRead;
+                }
+            }
+            System.out.println("Ảnh đã được lưu tại: " + outputPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void viewLeaderboard(){

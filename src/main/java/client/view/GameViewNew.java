@@ -80,6 +80,7 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
 
         cl_panel=new CenterPanel(this.name1,this.pointXY); cl_panel.addMouseListener(this);
         cr_panel=new CenterPanel(this.name2,this.pointXY); cr_panel.addMouseListener(this);
+        System.out.println("adsdsd" + name1 + " " + name2);
         center_panel.add(cl_panel);center_panel.add(cr_panel);
 
         JTextArea tips=new JTextArea();
@@ -356,7 +357,7 @@ class CenterPanel extends JPanel
     {
         this.name=name;
         Image image;
-        image=Toolkit.getDefaultToolkit().getImage("D:/DIYdata/"+name);
+        image=Toolkit.getDefaultToolkit().getImage("src/main/java/client/image/"+name);
 
         File file=new File("D:/DIYdata/"+name);
         if(!file.exists()) image=Toolkit.getDefaultToolkit().getImage(AssetHelper.DEFAULT_DATA_PATH + name);
