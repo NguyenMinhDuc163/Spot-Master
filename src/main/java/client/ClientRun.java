@@ -55,7 +55,7 @@ public class ClientRun {
         infoPlayerView = new InfoPlayerView();
         messageView = new MessageView();
         gameView = new GameView();
-        gameViewNew = new GameViewNew(false, 2);
+        gameViewNew = new GameViewNew(false, "1"); // intialize gameViewNew
         leaderboardView = new LeaderboardView();
     }
 
@@ -86,9 +86,9 @@ public class ClientRun {
                     messageView = new MessageView();
                     messageView.setVisible(true);
                     break;
-                case GAMEVIEW:
-                    gameViewNew = new GameViewNew(true, 3);
-                    gameViewNew.showGameViewNew(true,"3");
+//                case GAMEVIEW:
+//                    gameViewNew = new GameViewNew(true, 3);
+//                    gameViewNew.showGameViewNew(true,"3");
 
 //                    break;
                 case gameViewNew:

@@ -33,4 +33,6 @@ public class AssetHelper {
     public static final String MUSIC_BGM = MUSIC_PATH + "bgm.wav";
     public static final String MUSIC_CLICK = MUSIC_PATH + "click.wav";
 
+    // Image
+
 }

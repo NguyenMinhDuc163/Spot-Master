@@ -1,6 +1,7 @@
 package client.view;
 
 import client.ClientRun;
+import client.controller.SocketHandler;
 import client.helper.AssetHelper;
 import client.view.game_view.DIYdata;
 import client.view.game_view.MusicPlayer;
@@ -41,7 +42,7 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
     private int opponentScore = 0;       // Điểm của đối thủ
 
     //Khởi tạo bảng điều khiển trò chơi
-    public GameViewNew(boolean isShow, int level)
+    public GameViewNew(boolean isShow, String level)
     {
 
         PlayFrame frame = new PlayFrame();  // Nếu bạn vẫn cần sử dụng PlayFrame
@@ -63,9 +64,12 @@ public class GameViewNew extends JPanel implements ActionListener,MouseListener{
 
         PF=frame;
         this.frame=frame;
-        this.name1=listImage1.get(level);
-        this.name2=listImage2.get(level);
-        this.pointXY=pointImage.get(level);
+//        this.name1=listImage1.get(level);
+//        this.name2=listImage2.get(level);
+        this.name1="image_01.jpg";
+        this.name2="image_01_diff.jpg";
+        System.out.println("pointImage: " + pointImage + " " +  pointImage.size() + " " + Integer.parseInt(level) );
+        this.pointXY=pointImage.get(Integer.parseInt(level) - 1);
         this.addMouseListener(this);
         this.setLayout(new BorderLayout());
         this.setBackground(new Color(56, 152, 248));
@@ -285,12 +289,12 @@ public void setLossGame(String status) {
         }
 
     }
-    public void showGameViewNew(boolean isShow, String index) {
+    public void showGameViewNew(boolean isShow, String index, String name1, String name2) {
         int idx = Integer.parseInt(index);
-
-        this.name1 = listImage1.get(idx);
-        this.name2 = listImage2.get(idx);
-        this.pointXY = pointImage.get(idx);
+        System.out.println("image name: " + SocketHandler.imageName + " " + idx);
+        this.name1=name1;
+        this.name2=name2;
+        this.pointXY = pointImage.get(idx - 1);
 
         // Cập nhật lại cl_panel và cr_panel với dữ liệu mới
         cl_panel.updateData(this.name1, this.pointXY);

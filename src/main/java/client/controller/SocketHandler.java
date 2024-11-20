@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -22,7 +23,7 @@ public class SocketHandler {
     String loginUser = null; // lưu tài khoản đăng nhập hiện tại
     String roomIdPresent = null; // lưu room hiện tại
     float score = 0;
-    
+    public static ArrayList<String> imageName = new ArrayList<>();
     Thread listener = null;
 
     public String connect(String addr, int port) {
@@ -173,20 +174,23 @@ public class SocketHandler {
             File dir = new File(saveDirectory);
             if (!dir.exists()) dir.mkdirs();
 
-            int imageCount = dis.readInt(); // Nhận số lượng ảnh
+            // Nhận số lượng ảnh
+            int imageCount = dis.readInt();
             System.out.println("Số lượng ảnh cần nhận: " + imageCount);
 
             for (int i = 0; i < imageCount; i++) {
-                String partKey = dis.readUTF(); // Nhận key
+                // Nhận key và kiểm tra
+                String partKey = dis.readUTF();
                 if (!"IMAGE_PART".equals(partKey)) {
                     System.err.println("Lỗi: Key không khớp, mong đợi IMAGE_PART nhưng nhận được: " + partKey);
                     break;
                 }
 
-                String fileName = dis.readUTF();  // Nhận tên ảnh
-                long fileSize = dis.readLong();  // Nhận kích thước ảnh
+                // Nhận tên và kích thước ảnh
+                String fileName = dis.readUTF();
+                long fileSize = dis.readLong();
                 System.out.println("Nhận ảnh: " + fileName + " (" + fileSize + " bytes)");
-
+                imageName.add(fileName);
                 // Nhận nội dung ảnh
                 try (FileOutputStream fos = new FileOutputStream(saveDirectory + fileName)) {
                     byte[] buffer = new byte[4096];
@@ -209,7 +213,13 @@ public class SocketHandler {
                 // Gửi ACK
                 dos.writeUTF("ACK");
             }
+            System.out.println("da luu xong " + imageName);
+            String level = Integer.toString(Integer.parseInt(imageName.get(0).replaceAll("\\D+", "").trim()));
 
+            System.out.println("level: " + level);
+            ClientRun.gameViewNew = new GameViewNew(true, level);
+            ClientRun.gameViewNew.showGameViewNew(true,level, imageName.get(0), imageName.get(1));
+            // Kiểm tra key kết thúc
             String endKey = dis.readUTF();
             if (!"END_IMAGE_TRANSMISSION".equals(endKey)) {
                 System.err.println("Lỗi: Không nhận được thông báo kết thúc.");
@@ -219,6 +229,7 @@ public class SocketHandler {
             e.printStackTrace();
         }
     }
+
 
 
     public void viewLeaderboard(){
@@ -597,7 +608,7 @@ public class SocketHandler {
             ClientRun.gameView.setInfoPlayer(userInvited);
             ClientRun.gameViewNew.setInfoPlayer(userInvited);
             System.out.println("Khi chap nhan  + UserInvited: " + userInvited);
-
+            sendData("IMAGE");
             ClientRun.gameView.setStateHostRoom();
         }
     }
@@ -639,9 +650,9 @@ public class SocketHandler {
     
     private void onReceiveStartGame(String received) {
         // get status from data
-        String[] splitted = received.split(";");
+        String[] splitted = received.split( ";");
         String data = splitted[4];
-        ClientRun.gameViewNew.showGameViewNew(true, data);
+//        ClientRun.gameViewNew.showGameViewNew(true, data);
     }
     
     private void onReceiveResultGame(String received) {
@@ -715,5 +726,8 @@ public class SocketHandler {
     public void setScore(float score) {
         this.score = score;
     }
-    
+
+    public ArrayList<String> getImageName() {
+        return imageName;
+    }
 }
