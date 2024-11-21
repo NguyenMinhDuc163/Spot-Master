@@ -187,14 +187,11 @@ public class UserController {
         return null;
     }
 
-    public void getPointData(int key, ArrayList<String> name1, ArrayList<String> name2, ArrayList<double[]> XY){
+    public void getPointData(int key, ArrayList<String> name1, ArrayList<String> name2, ArrayList<double[]> XY) {
         try {
-
-
-
             // Truy vấn lấy thông tin từ bảng images
             String sqlImages = "SELECT id, image_path_1, image_path_2 FROM images";
-            try (PreparedStatement stmtImages = this.con .prepareStatement(sqlImages);
+            try (PreparedStatement stmtImages = this.con.prepareStatement(sqlImages);
                  ResultSet rsImages = stmtImages.executeQuery()) {
 
                 while (rsImages.next()) {
@@ -207,7 +204,7 @@ public class UserController {
 
                     // Lấy các điểm khác biệt cho mỗi imageId từ bảng differences
                     String sqlDiff = "SELECT x_coordinate, y_coordinate FROM differences WHERE image_id = ?";
-                    try (PreparedStatement stmtDiff = this.con .prepareStatement(sqlDiff)) {
+                    try (PreparedStatement stmtDiff = this.con.prepareStatement(sqlDiff)) {
                         stmtDiff.setInt(1, imageId);
                         try (ResultSet rsDiff = stmtDiff.executeQuery()) {
                             double[] points = new double[10];
@@ -219,7 +216,7 @@ public class UserController {
                             }
                             XY.add(points);
                         }
-                    }
+                    } // stmtDiff và rsDiff được đóng đúng cách trước khi lặp lại rsImages
                 }
             }
             System.out.println("Get data successfully: " + XY.size() + " images, " + name1.size() + " differences");
@@ -227,6 +224,7 @@ public class UserController {
             e.printStackTrace();
         }
     }
+
 
     public void saveGame(String username, int score, int timeLimit, String statusUser, String opponentName, int opponentScore) throws SQLException {
         System.out.println("->>>>>> timeLimit: " + timeLimit);
@@ -370,24 +368,24 @@ public class UserController {
     }
 
 
-    public  void getDataPoint(int level){
-        ArrayList<String> name1 = new ArrayList<>();
-        ArrayList<String> name2 = new ArrayList<>();
-        ArrayList<double[]> pointXY = new ArrayList<>();
+        public  void getDataPoint(int level){
+            ArrayList<String> name1 = new ArrayList<>();
+            ArrayList<String> name2 = new ArrayList<>();
+            ArrayList<double[]> pointXY = new ArrayList<>();
 
-        // Tạo đối tượng DIYdata và gọi phương thức get
-        new UserController().getPointData(level, name1, name2, pointXY);
+            // Tạo đối tượng DIYdata và gọi phương thức get
+            new UserController().getPointData(level, name1, name2, pointXY);
 
 
-        StringBuilder dataToSend = new StringBuilder();
-        dataToSend.append(name1.get(2)).append(";")
-                .append(name2.get(2)).append(";");
-        for (double coord : pointXY.get(2)) {
-            dataToSend.append(coord).append(";");
+            StringBuilder dataToSend = new StringBuilder();
+            dataToSend.append(name1.get(2)).append(";")
+                    .append(name2.get(2)).append(";");
+            for (double coord : pointXY.get(2)) {
+                dataToSend.append(coord).append(";");
+            }
+            System.out.println(dataToSend);
+
         }
-        System.out.println(dataToSend);
-
-    }
 
     public static void main(String[] args) throws SQLException {
         // Khởi tạo các ArrayList để lưu dữ liệu

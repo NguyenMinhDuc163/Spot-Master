@@ -513,7 +513,7 @@ public class Client implements Runnable {
         }
         // send result
         sendData("CHECK_STATUS_USER" + ";" + username + ";" + status);
-        new UserController().getDataPoint(1);
+//        new UserController().getDataPoint(1);
     }
 
     private void onReceiveStartGame(String received) {
