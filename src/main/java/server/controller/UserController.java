@@ -194,6 +194,7 @@ public class UserController {
             try (PreparedStatement stmtImages = this.con.prepareStatement(sqlImages);
                  ResultSet rsImages = stmtImages.executeQuery()) {
 
+                // Lặp qua từng ảnh từ bảng images
                 while (rsImages.next()) {
                     int imageId = rsImages.getInt("id");
                     String image1 = rsImages.getString("image_path_1");
@@ -204,19 +205,25 @@ public class UserController {
 
                     // Lấy các điểm khác biệt cho mỗi imageId từ bảng differences
                     String sqlDiff = "SELECT x_coordinate, y_coordinate FROM differences WHERE image_id = ?";
+
+                    // Đảm bảo PreparedStatement cho truy vấn differences được đóng đúng cách
                     try (PreparedStatement stmtDiff = this.con.prepareStatement(sqlDiff)) {
                         stmtDiff.setInt(1, imageId);
+
                         try (ResultSet rsDiff = stmtDiff.executeQuery()) {
                             double[] points = new double[10];
                             int index = 0;
+
+                            // Lặp qua các điểm khác biệt
                             while (rsDiff.next() && index < 10) {
                                 points[index] = rsDiff.getDouble("x_coordinate");
                                 points[index + 1] = rsDiff.getDouble("y_coordinate");
                                 index += 2;
                             }
+                            // Thêm điểm vào danh sách
                             XY.add(points);
                         }
-                    } // stmtDiff và rsDiff được đóng đúng cách trước khi lặp lại rsImages
+                    }
                 }
             }
             System.out.println("Get data successfully: " + XY.size() + " images, " + name1.size() + " differences");
@@ -224,7 +231,6 @@ public class UserController {
             e.printStackTrace();
         }
     }
-
 
     public void saveGame(String username, int score, int timeLimit, String statusUser, String opponentName, int opponentScore) throws SQLException {
         System.out.println("->>>>>> timeLimit: " + timeLimit);
