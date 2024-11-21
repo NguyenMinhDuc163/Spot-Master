@@ -34,5 +34,5 @@ public class AssetHelper {
     public static final String MUSIC_CLICK = MUSIC_PATH + "click.wav";
 
     // Image
-
+    public static final String IMAGE_URL = "src/main/java/client/image/";
 }

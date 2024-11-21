@@ -186,7 +186,7 @@ public class UserController {
         }
         return null;
     }
-
+    // TODO lay du lieu diem khac biet tu data base
     public void getPointData(int key, ArrayList<String> name1, ArrayList<String> name2, ArrayList<double[]> XY) {
         try {
             // Truy vấn lấy thông tin từ bảng images

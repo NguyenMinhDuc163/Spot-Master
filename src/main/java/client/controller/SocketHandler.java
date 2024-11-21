@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import client.ClientRun;
+import client.helper.AssetHelper;
 import client.view.GameViewNew;
 import server.helper.LoggerHandler;
 
@@ -167,10 +168,10 @@ public class SocketHandler {
     }
 
 
-
+    // CLient nhan anh
     private void onReceiveImage() {
         try {
-            String saveDirectory = "src/main/java/client/image/";
+            String saveDirectory = AssetHelper.IMAGE_URL;
             File dir = new File(saveDirectory);
             if (!dir.exists()) dir.mkdirs();
 
@@ -246,6 +247,8 @@ public class SocketHandler {
         System.out.println("da nhan duoc point " + received);
     }
 
+
+    // TODO cap nhat giao dien khi co kq dung
     private void onReceiveLocation(String received) {
         String[] splitted = received.split(";");
         ClientRun.updateScreen(Integer.parseInt(splitted[1]), Integer.parseInt(splitted[2]));
@@ -318,6 +321,7 @@ public class SocketHandler {
         sendData("START_GAME;" + loginUser + ";" + userInvited + ";" + roomIdPresent);
     }
 
+    // TODO gui ket qua khi co nguoi chien thang or het thoi gian
     public void submitNewResult(String score, String time, String competitor, String status, int opponentScore) {
         System.out.println("Submit new result score: " + score + " time: " + time + " competitor: " + competitor + " status: " + status);
         String ans = ClientRun.gameViewNew.getFoundDifferences() + ";" + ClientRun.gameViewNew.getTimeTaken();
@@ -327,6 +331,8 @@ public class SocketHandler {
     }
 
 
+
+    // TODO gui ket qua
     public void sendLocation(int x, int y) {
         String data = "LOCATION;" + x + ";" + y;
         sendData(data);

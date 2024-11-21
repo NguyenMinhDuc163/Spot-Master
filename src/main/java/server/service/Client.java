@@ -41,9 +41,7 @@ public class Client implements Runnable {
     double[] XY = new double[2];
 
     double[] userXY = new double[2];
-    private  String image = "image_03.jpg";
-    private String imageDiff = "image_03_diff.jpg";
-
+    private final int level = 3;
 
     ArrayList<Double> user_correct = new ArrayList<>();
 
@@ -187,10 +185,12 @@ public class Client implements Runnable {
         }
     }
 
+
+    // TODO Gui anh cho client
     private void onSendImage() {
         String[] imagePaths = {
-                "src/main/java/server/image/" + image,
-                "src/main/java/server/image/" + imageDiff
+                "src/main/java/server/image/" + name1.get(level),
+                "src/main/java/server/image/" + name2.get(level)
         };
 
         try {
@@ -279,6 +279,8 @@ public class Client implements Runnable {
         System.out.println("da gui dataToSend " + dataToSend);
     }
 
+
+    // TODO nhan toan do tu CLienr
     private void onReceiveLocation(String received) {
         System.out.println("da vao location 2"  + received);
         String[] splitted = received.split(";");
@@ -529,7 +531,6 @@ public class Client implements Runnable {
 
     private void onReceiveStartGame(String received) {
 
-
         new UserController().getPointData(0, name1, name2, pointXY);
         StringBuilder dataToSend = new StringBuilder();
         dataToSend.append(name1.get(2)).append(";")
@@ -553,7 +554,9 @@ public class Client implements Runnable {
         joinedRoom.broadcast(data);
         joinedRoom.startGame();
     }
-    
+
+
+    // TODO nhan ket qua khi ket thuc
     private void onReceiveSubmitResult(String received) throws SQLException {
         System.out.println("da nhan duoc result: " + received);
         String []s = received.split(";");
@@ -656,17 +659,18 @@ public class Client implements Runnable {
 
         }
 
-//        judge(new double[]{0,0,0,0}, new double[]{0,0}, new ArrayList<>());
     }
 
+
+    // Check logic game
     public  boolean judge(String x, String y) {
 
         int x1 =(int) Double.parseDouble(x);
         int y2 =(int) Double.parseDouble(y);
 
         // Tạo đối tượng DIYdata và gọi phương thức get
-        String level = Integer.toString(Integer.parseInt(image.replaceAll("\\D+", "").trim()));
-        XY = pointXY.get(Integer.parseInt(level) - 1);
+        String levelGame = Integer.toString(Integer.parseInt(name1.get(level).replaceAll("\\D+", "").trim()));
+        XY = pointXY.get(Integer.parseInt(levelGame) - 1);
 
 
         Point p0 = new Point(x1, y2);
