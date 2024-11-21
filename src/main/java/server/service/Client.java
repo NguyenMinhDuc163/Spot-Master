@@ -38,7 +38,14 @@ public class Client implements Runnable {
     private ArrayList<String> name1 = new ArrayList<>();
     private ArrayList<String> name2 = new ArrayList<>();
     private ArrayList<double[]> pointXY = new ArrayList<>();
+    double[] XY = new double[2];
 
+    double[] userXY = new double[2];
+    private  String image = "image_03.jpg";
+    private String imageDiff = "image_03_diff.jpg";
+
+
+    ArrayList<Double> user_correct = new ArrayList<>();
 
     public Client(Socket s) throws IOException {
         this.s = s;
@@ -47,6 +54,8 @@ public class Client implements Runnable {
         // obtaining input and output streams
         this.dis = new DataInputStream(s.getInputStream());
         this.dos = new DataOutputStream(s.getOutputStream());
+        userXY[0]=-256; userXY[1]=-256;
+        new UserController().getPointData(0, name1, name2, pointXY);
     }
 
     @Override
@@ -180,8 +189,8 @@ public class Client implements Runnable {
 
     private void onSendImage() {
         String[] imagePaths = {
-                "/home/nguyenduc/java_test/image/image_05.jpg",
-                "/home/nguyenduc/java_test/image/image_05_diff.jpg"
+                "src/main/java/server/image/" + image,
+                "src/main/java/server/image/" + imageDiff
         };
 
         try {
@@ -273,8 +282,10 @@ public class Client implements Runnable {
     private void onReceiveLocation(String received) {
         System.out.println("da vao location 2"  + received);
         String[] splitted = received.split(";");
-//        boolean isCheck = judge(new double[]{0,0,0,0}, new double[]{Double.parseDouble(splitted[1]), Double.parseDouble(splitted[2])}, new ArrayList<>());
-        ServerRun.clientManager.broadcast( received);
+        boolean isCheck = judge(splitted[1], splitted[2]);
+        System.out.println("da vao location 3"  + isCheck);
+        if(isCheck)
+            ServerRun.clientManager.broadcast( received);
     }
 
     // send data functions
@@ -645,14 +656,20 @@ public class Client implements Runnable {
 
         }
 
-        judge(new double[]{0,0,0,0}, new double[]{0,0}, new ArrayList<>());
+//        judge(new double[]{0,0,0,0}, new double[]{0,0}, new ArrayList<>());
     }
 
-    public static boolean judge(double[] XY,double[] userXY, ArrayList<Double> user_correct) {
+    public  boolean judge(String x, String y) {
+
+        int x1 =(int) Double.parseDouble(x);
+        int y2 =(int) Double.parseDouble(y);
+
+        // Tạo đối tượng DIYdata và gọi phương thức get
+        String level = Integer.toString(Integer.parseInt(image.replaceAll("\\D+", "").trim()));
+        XY = pointXY.get(Integer.parseInt(level) - 1);
 
 
-
-        Point p0 = new Point((int)userXY[0], (int)userXY[1]);
+        Point p0 = new Point(x1, y2);
 
         boolean isCorrect = false;
         int i;

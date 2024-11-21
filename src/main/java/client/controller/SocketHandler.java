@@ -170,7 +170,7 @@ public class SocketHandler {
 
     private void onReceiveImage() {
         try {
-            String saveDirectory = "src/main/java/client/image/a";
+            String saveDirectory = "src/main/java/client/image/";
             File dir = new File(saveDirectory);
             if (!dir.exists()) dir.mkdirs();
 

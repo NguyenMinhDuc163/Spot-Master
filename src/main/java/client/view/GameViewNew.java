@@ -393,7 +393,7 @@ class CenterPanel extends JPanel
     //TODO logic game
     public boolean judge() {
         Point p0 = new Point((int)userXY[0], (int)userXY[1]);
-
+        System.out.println("userXY: " + userXY[0] + " " + userXY[1]);
         boolean isCorrect = false;
         int i;
         for (i = 0; i < XY.length; i += 2) {
