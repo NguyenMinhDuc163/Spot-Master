@@ -189,8 +189,8 @@ public class Client implements Runnable {
     // TODO Gui anh cho client
     private void onSendImage() {
         String[] imagePaths = {
-                "src/main/java/server/image/" + name1.get(level),
-                "src/main/java/server/image/" + name2.get(level)
+                "/home/nguyenduc/java_test/image/" + name1.get(level),
+                "/home/nguyenduc/java_test/image/" + name2.get(level)
         };
 
         try {
