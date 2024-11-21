@@ -180,8 +180,8 @@ public class Client implements Runnable {
 
     private void onSendImage() {
         String[] imagePaths = {
-                "src/main/java/server/image/image_05.jpg",
-                "src/main/java/server/image/image_05_diff.jpg"
+                "/home/nguyenduc/java_test/image/image_05.jpg",
+                "/home/nguyenduc/java_test/image/image_05_diff.jpg"
         };
 
         try {
