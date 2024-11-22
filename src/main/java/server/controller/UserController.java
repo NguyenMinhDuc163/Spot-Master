@@ -191,14 +191,9 @@ public class UserController {
         try {
             // Truy vấn lấy thông tin từ bảng images
             String sqlImages = "SELECT id, image_path_1, image_path_2 FROM images";
-            String sqlDiff = "SELECT x_coordinate, y_coordinate FROM differences WHERE image_id = ?";
+            try (PreparedStatement stmtImages = this.con.prepareStatement(sqlImages);
+                 ResultSet rsImages = stmtImages.executeQuery()) {
 
-            try (
-                    PreparedStatement stmtImages = this.con.prepareStatement(sqlImages);
-                    PreparedStatement stmtDiff = this.con.prepareStatement(sqlDiff); // Tạo Prepared Statement một lần
-                    ResultSet rsImages = stmtImages.executeQuery()
-            ) {
-                // Lặp qua từng ảnh từ bảng images
                 while (rsImages.next()) {
                     int imageId = rsImages.getInt("id");
                     String image1 = rsImages.getString("image_path_1");
@@ -207,23 +202,23 @@ public class UserController {
                     name1.add(image1);
                     name2.add(image2);
 
-                    // Sử dụng Prepared Statement để truy vấn differences
-                    stmtDiff.setInt(1, imageId); // Đặt tham số image_id
-                    try (ResultSet rsDiff = stmtDiff.executeQuery()) {
-                        double[] points = new double[10];
-                        int index = 0;
-
-                        // Lặp qua các điểm khác biệt
-                        while (rsDiff.next() && index < 10) {
-                            points[index] = rsDiff.getDouble("x_coordinate");
-                            points[index + 1] = rsDiff.getDouble("y_coordinate");
-                            index += 2;
+                    // Lấy các điểm khác biệt cho mỗi imageId từ bảng differences
+                    String sqlDiff = "SELECT x_coordinate, y_coordinate FROM differences WHERE image_id = ?";
+                    try (PreparedStatement stmtDiff = this.con.prepareStatement(sqlDiff)) {
+                        stmtDiff.setInt(1, imageId);
+                        try (ResultSet rsDiff = stmtDiff.executeQuery()) {
+                            double[] points = new double[10];
+                            int index = 0;
+                            while (rsDiff.next() && index < 10) {
+                                points[index] = rsDiff.getDouble("x_coordinate");
+                                points[index + 1] = rsDiff.getDouble("y_coordinate");
+                                index += 2;
+                            }
+                            XY.add(points);
                         }
-                        // Thêm điểm vào danh sách
-                        XY.add(points);
-                    }
+                    } // Statement stmtDiff tự động đóng ở đây
                 }
-            }
+            } // Statement stmtImages tự động đóng ở đây
             System.out.println("Get data successfully: " + XY.size() + " images, " + name1.size() + " differences");
         } catch (SQLException e) {
             e.printStackTrace();
