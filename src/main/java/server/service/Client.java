@@ -458,7 +458,7 @@ public class Client implements Runnable {
         // send result
         String msg = "ACCEPT_PLAY;" + "success;" + userHost + ";" + userInvited + ";" + joinedRoom.getId() ;
         ServerRun.clientManager.sendToAClient(userHost, msg);
-        onSendPoint();
+//        onSendPoint();
 //        onSendImage();
         
     }      
